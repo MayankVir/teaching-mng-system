@@ -13,11 +13,11 @@ const getAllUsers = () => {
   return axios.get(BASE_URL + "api/user", { headers: authHeader() });
 };
 
-const getAssignedUsers = (id) => {
-  return axios.get(BASE_URL + "api/quizassign" + "?quiz=" + id, {
-    headers: authHeader(),
-  });
-};
+// const getAssignedUsers = (id) => {
+//   return axios.get(BASE_URL + "api/quizassign" + "?quiz=" + id, {
+//     headers: authHeader(),
+//   });
+// };
 
 const putUserResponse = (id, response) => {
   const body = { response: response };
@@ -31,11 +31,11 @@ const putUserReviewScore = (id, marking) => {
     headers: authHeader(),
   });
 };
-const getOneResponse = (email) => {
-  return axios.get(BASE_URL + "api/quizassign/?email=" + email, {
-    headers: authHeader(),
-  });
-};
+// const getOneResponse = (email) => {
+//   return axios.get(BASE_URL + "api/quizassign/?email=" + email, {
+//     headers: authHeader(),
+//   });
+// };
 const getDetails = () => {
   return axios.get(BASE_URL + "api/user/me", { headers: authHeader() });
 };
@@ -86,7 +86,7 @@ async function uploadFile(file, testId) {
 
 export default {
   getPublicContent,
-  getAssignedUsers,
+  // getAssignedUsers,
   getAllUsers,
   putUserResponse,
   putUserReviewScore,
@@ -94,7 +94,7 @@ export default {
   uploadFile,
   // getAllTests,
   // getOneTest,
-  getOneResponse,
+  // getOneResponse,
   // saveOneTest,
   // createOneTest,
   // deleteOneTest,

@@ -13,12 +13,15 @@ import Dashboard from "./pages/Dashboard";
 import Test from "./pages/Test";
 import Sidebar from "./components/common/Sidebar";
 import CreateTest from "./components/tests/CreateTest";
+import PreviewTest from "./components/tests/PreviewTest";
 
 import Authentication from "./components/common/Authentication";
 
 import { useDispatch, useSelector } from "react-redux";
 import { clearMessage } from "./actions/message";
 import DeleteTest from "./components/tests/extras/DeleteTest";
+import GiveScore from "./components/tests/GiveScore";
+import GetScore from "./components/tests/GetScore";
 
 const history = createBrowserHistory();
 const App = () => {
@@ -52,6 +55,21 @@ const App = () => {
               exact
               path="/tests/edit/:id"
               component={CreateTest}
+            />
+            <Authentication
+              exact
+              path="/tests/preview/:id"
+              component={PreviewTest}
+            />
+            <Authentication
+              exact
+              path="/tests/response/:id"
+              component={GetScore}
+            />
+            <Authentication
+              exact
+              path="/tests/students/:id"
+              component={GiveScore}
             />
             <Authentication
               exact

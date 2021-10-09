@@ -52,7 +52,7 @@ const CreateTest = (props) => {
           title: response.data.title ? response.data.title : "",
           data: {
             description: "",
-            duration: { hours: 0, minutes: 0 },
+            duration: { start: 0, end: 0 },
             assign: [],
             ...response.data.data,
           },
@@ -231,131 +231,149 @@ const CreateTest = (props) => {
       data: { ...prevData.data, assign: emailArray },
     }));
   };
+  const isAdmin = () => {
+    // var admin = window.localStorage["user"];
+    var admin = JSON.parse(window.localStorage["user"].toString());
+    console.log(admin.name);
+
+    if (admin["type"] === "A") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
-    <div className="container-fluid">
-      <div className="row pt-3">
-        <div className="col">
-          {pageLoading ? (
-            <div
-              className="justify-content-center align-items-end d-flex"
-              style={{ minHeight: "250px" }}
-            >
-              <Icon
-                path={mdiLoading}
-                className="spinner mr-2 text-primary"
-                size={2}
-              />
+    <div>
+      {!isAdmin() ? (
+        <div>You are not Authorised here</div>
+      ) : (
+        <div className="container-fluid">
+          <div className="row pt-3">
+            <div className="col">
+              {pageLoading ? (
+                <div
+                  className="justify-content-center align-items-end d-flex"
+                  style={{ minHeight: "250px" }}
+                >
+                  <Icon
+                    path={mdiLoading}
+                    className="spinner mr-2 text-primary"
+                    size={2}
+                  />
+                </div>
+              ) : (
+                <h3>Test Details</h3>
+              )}
             </div>
-          ) : (
-            <h3>Test Details</h3>
+          </div>
+          {!pageLoading && (
+            <Form onSubmit={(e) => saveTest(e)}>
+              <div>
+                <FormGroup className="mb-3">
+                  <Label>Test Title</Label>
+                  <Input
+                    type="text"
+                    name="title"
+                    required
+                    value={testData.title}
+                    onChange={handleTitle}
+                    className="border-primary py-3"
+                    placeholder="Test Title"
+                  />
+                </FormGroup>
+                <FormGroup className="mb-3">
+                  <Label className="mb-0">Test Description</Label>
+                  <Input
+                    type="textarea"
+                    required
+                    value={testData.data.description}
+                    onChange={handleDescription}
+                    className="border-primary py-3"
+                    placeholder="Test Description"
+                  />
+                  <FormGroup>
+                    <Label>Test Duration</Label>
+                    <div className="d-flex justify-content-between w-50">
+                      <div>
+                        <Label className="mt-3 mb-0">Start Date & Time</Label>
+                        <Datetime
+                          className="w-30"
+                          inputProps={{ placeholder: "Start Date & Time" }}
+                          value={new Date(testData.data.duration.start)}
+                          onChange={handleDurationStart}
+                        />
+                      </div>
+                      <div>
+                        <Label className="mt-3 mb-0">End Date & Time</Label>
+                        <Datetime
+                          className="w-30"
+                          inputProps={{ placeholder: "End Date & Time" }}
+                          value={new Date(testData.data.duration.end)}
+                          onChange={handleDurationEnd}
+                        />
+                      </div>
+                    </div>
+                  </FormGroup>
+                </FormGroup>
+
+                <FormGroup>
+                  <Label className="mb-0">Assign Test</Label>
+                  <Input
+                    type="textarea"
+                    required
+                    value={testData.data.assign}
+                    onChange={handleAssign}
+                    className="border-primary py-3"
+                    placeholder="Paste comma separated emails to assign"
+                  />
+                </FormGroup>
+
+                <h3 className="mt-4">Test Structure</h3>
+                <p className="text-secondary mb-0" style={{ opacity: "0.5" }}>
+                  Add your own questions with fields for the test.
+                </p>
+              </div>
+              <AddSection
+                components={components}
+                setComponents={setComponents}
+                handleSectionTitle={handleSectionTitle}
+                handleSectionDescription={handleSectionDescription}
+                updateQuestionOrder={updateQuestionOrder}
+                updateQuestion={updateQuestion}
+                deleteQuestion={deleteQuestion}
+                duplicateQuestion={duplicateQuestion}
+                addQuestion={addQuestion}
+                deleteSection={deleteSection}
+                duplicateSection={duplicateSection}
+                addSection={addSection}
+              />
+              <div className="mt-4 mb-3 mb-lg-5 d-flex">
+                <Button onClick={(e) => previewTest(e)} color="primary">
+                  Preview Test
+                </Button>
+                <Button
+                  disabled={saving}
+                  type="submit"
+                  className="ml-3 d-flex align-items-center"
+                  color="success"
+                >
+                  {saving && (
+                    <Icon path={mdiLoading} className="spinner mr-2" size={1} />
+                  )}
+                  Save Test
+                </Button>
+                <Button
+                  onClick={(e) => deleteTest(e)}
+                  className="ml-auto"
+                  color="danger"
+                >
+                  Delete Test
+                </Button>
+              </div>
+            </Form>
           )}
         </div>
-      </div>
-      {!pageLoading && (
-        <Form onSubmit={(e) => saveTest(e)}>
-          <div>
-            <FormGroup className="mb-3">
-              <Label>Test Title</Label>
-              <Input
-                type="text"
-                name="title"
-                required
-                value={testData.title}
-                onChange={handleTitle}
-                className="border-primary py-3"
-                placeholder="Test Title"
-              />
-            </FormGroup>
-            <FormGroup className="mb-3">
-              <Label className="mb-0">Test Description</Label>
-              <Input
-                type="textarea"
-                required
-                value={testData.data.description}
-                onChange={handleDescription}
-                className="border-primary py-3"
-                placeholder="Test Description"
-              />
-              <FormGroup>
-                <Label>Test Duration</Label>
-                <div className="d-flex justify-content-between w-50">
-                  <div>
-                    <Label className="mt-3 mb-0">Start Date & Time</Label>
-                    <Datetime
-                      className="w-30"
-                      inputProps={{ placeholder: "Start Date & Time" }}
-                      value={new Date(testData.data.duration.start)}
-                      onChange={handleDurationStart}
-                    />
-                  </div>
-                  <div>
-                    <Label className="mt-3 mb-0">End Date & Time</Label>
-                    <Datetime
-                      className="w-30"
-                      inputProps={{ placeholder: "End Date & Time" }}
-                      value={new Date(testData.data.duration.end)}
-                      onChange={handleDurationEnd}
-                    />
-                  </div>
-                </div>
-              </FormGroup>
-            </FormGroup>
-
-            <FormGroup>
-              <Label className="mb-0">Assign Test</Label>
-              <Input
-                type="textarea"
-                required
-                value={testData.data.assign}
-                onChange={handleAssign}
-                className="border-primary py-3"
-                placeholder="Paste comma separated emails to assign"
-              />
-            </FormGroup>
-
-            <h3 className="mt-4">Test Structure</h3>
-            <p className="text-secondary mb-0" style={{ opacity: "0.5" }}>
-              Add your own questions with fields for the test.
-            </p>
-          </div>
-          <AddSection
-            components={components}
-            setComponents={setComponents}
-            handleSectionTitle={handleSectionTitle}
-            handleSectionDescription={handleSectionDescription}
-            updateQuestionOrder={updateQuestionOrder}
-            updateQuestion={updateQuestion}
-            deleteQuestion={deleteQuestion}
-            duplicateQuestion={duplicateQuestion}
-            addQuestion={addQuestion}
-            deleteSection={deleteSection}
-            duplicateSection={duplicateSection}
-            addSection={addSection}
-          />
-          <div className="mt-4 mb-3 mb-lg-5 d-flex">
-            <Button onClick={(e) => previewTest(e)} color="primary">
-              Preview Test
-            </Button>
-            <Button
-              disabled={saving}
-              type="submit"
-              className="ml-3 d-flex align-items-center"
-              color="success"
-            >
-              {saving && (
-                <Icon path={mdiLoading} className="spinner mr-2" size={1} />
-              )}
-              Save Test
-            </Button>
-            <Button
-              onClick={(e) => deleteTest(e)}
-              className="ml-auto"
-              color="danger"
-            >
-              Delete Test
-            </Button>
-          </div>
-        </Form>
       )}
     </div>
   );

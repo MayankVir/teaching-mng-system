@@ -183,11 +183,16 @@ const TestQuestionEditor = ({
     });
   };
 
+  const optionChanged = () => {
+    console.log();
+  };
+
   const renderOptions = () => {
     return (
       <div className="mt-3">
         <div className="mt-2">
           <Label className="small mb-0">Options</Label>
+          {console.log(options)}
           {options &&
             options.map((data, index) => (
               <Row className="mb-2" key={index}>
@@ -218,11 +223,12 @@ const TestQuestionEditor = ({
                   xs="auto"
                   className="d-flex align-items-center justify-content-center px-0"
                 >
-                  <Input
+                  <input
                     type={rSelected === 1 ? "radio" : "checkbox"}
                     style={{ marginLeft: "10px" }}
                     name="radio1"
                     className="border-primary"
+                    onChange={optionChanged(index)}
                   />
                 </Col>
               </Row>

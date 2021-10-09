@@ -38,6 +38,17 @@ const assignEmail = (data, id) => {
     }
   );
 };
+const getAssignedUsers = (id) => {
+  return axios.get(BASE_URL + "api/quizassign?quiz=" + id, {
+    headers: authHeader(),
+  });
+};
+
+const getOneResponse = (email) => {
+  return axios.get(BASE_URL + "api/quizassign/?email=" + email, {
+    headers: authHeader(),
+  });
+};
 
 export default {
   getAllTests,
@@ -46,4 +57,6 @@ export default {
   saveOneTest,
   deleteOneTest,
   assignEmail,
+  getAssignedUsers,
+  getOneResponse,
 };
