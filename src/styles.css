@@ -1,0 +1,18 @@
+@import "../node_modules/bootstrap/dist/css/bootstrap.css";
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import url("https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-family: "Mulish", sans-serif;
+}
+
+html {
+  overflow-x: hidden;
+  /* overflow-y: auto; */
+}

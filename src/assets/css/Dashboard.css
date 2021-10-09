@@ -1,0 +1,15 @@
+.searchCreateTest {
+  display: flex;
+}
+
+.searchCreateTest > .search {
+  flex: 1;
+}
+.searchCreateTest > .search:hover {
+  background: #f2f3f7;
+}
+
+.searchCreateTest > .createTest {
+  margin: 0 0 0 2%;
+  padding: 0;
+}
