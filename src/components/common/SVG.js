@@ -26,7 +26,7 @@ const SVG = () => {
         </g>
         <g
           id="SvgjsG1897"
-          className="d-none d-md-block"
+          className="d-md-block"
           featurekey="nameFeature-0"
           transform="matrix(2.092050242596395,0,0,2.092050242596395,115.8159005123745,-15.899582641786436)"
           fill="#88b66d"

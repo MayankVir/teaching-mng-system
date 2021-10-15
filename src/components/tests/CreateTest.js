@@ -7,6 +7,7 @@ import { Redirect, useHistory } from "react-router-dom";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import AddSection from "./extras/AddSection";
+import "../common/Common.css";
 // import DatePicker from "react-datepicker";
 // import { DateTime } from "react-datetime-bootstrap";
 // import "react-datepicker/dist/react-datepicker.css";
@@ -295,7 +296,10 @@ const CreateTest = (props) => {
                   />
                   <FormGroup>
                     <Label>Test Duration</Label>
-                    <div className="d-flex justify-content-between w-50">
+                    <div
+                      className="smallerScreenTest d-flex justify-content-between"
+                      style={{ width: "50%" }}
+                    >
                       <div>
                         <Label className="mt-3 mb-0">Start Date & Time</Label>
                         <Datetime

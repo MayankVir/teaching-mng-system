@@ -77,7 +77,10 @@ const Login = (props) => {
     return <Redirect to="/dashboard" />;
   }
   return (
-    <div className="login-input">
+    <div
+      // className="login-input"
+      className="col-12 col-lg-6 d-flex align-items-center justify-content-center"
+    >
       <div className="login-input-div">
         <h2 className="login-heading">Login To Continue!</h2>
         <Form onSubmit={handleLogin} ref={form} className="login-form">

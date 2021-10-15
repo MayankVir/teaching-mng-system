@@ -108,7 +108,7 @@ const Register = () => {
   }
 
   return (
-    <div className="register-input">
+    <div className="col-12 col-lg-6 d-flex align-items-center justify-content-center">
       <div className="register-input-div">
         <h2 className="register-heading">Register New User</h2>
         <Form onSubmit={handleRegister} ref={form} className="register-form">

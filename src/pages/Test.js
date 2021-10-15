@@ -59,7 +59,7 @@ const Test = () => {
   return (
     <>
       <div className="pt-3 container-fluid">
-        <div className="row">
+        <div className="row smallerScreen">
           <div className="col-12 searchCreateTest">
             <div className="input-group mb-3 search">
               <input
