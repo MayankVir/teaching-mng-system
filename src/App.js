@@ -21,7 +21,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearMessage } from "./actions/message";
 import DeleteTest from "./components/tests/extras/DeleteTest";
 import GiveScore from "./components/tests/GiveScore";
-import GetScore from "./components/tests/GetScore";
+import SeeScore from "./components/tests/GetScore";
+import GiveTest from "./components/tests/GiveTest";
 
 const history = createBrowserHistory();
 const App = () => {
@@ -59,17 +60,22 @@ const App = () => {
             <Authentication
               exact
               path="/tests/preview/:id"
-              component={PreviewTest}
+              component={GiveTest}
             />
             <Authentication
               exact
               path="/tests/response/:id"
-              component={GetScore}
+              component={SeeScore}
             />
             <Authentication
               exact
               path="/tests/students/:id"
               component={GiveScore}
+            />
+            <Authentication
+              exact
+              path="/tests/giveTest/:id"
+              component={GiveTest}
             />
             <Authentication
               exact

@@ -12,18 +12,38 @@ import {
 } from "reactstrap";
 import Icon from "@mdi/react";
 import { mdiLoading } from "@mdi/js";
-import { ReactMediaRecorder } from "react-media-recorder";
+import {
+  ReactMediaRecorder,
+  useReactMediaRecorder,
+} from "react-media-recorder";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import Duration from "./extras/Duration";
 
-const renderQuestion = ({
+import jwt_decode from "jwt-decode";
+
+const RenderQuestion = ({
   type,
   question,
   options,
   isRequired,
   questionFiles,
   ansFileType,
+  question_details,
   index,
+  sectionIndex,
+  response,
+  onResponseChange,
+  onFilesChange,
 }) => {
+  //   var type = question_details["type"];
+  //   var question = question_details["question"];
+  //   var options = question_details["options"];
+  //   var isRequired = question_details["isRequired"];
+  //   var questionFiles = question_details["questionFiles"];
+  //   var ansFileType = question_details["ansFileType"];
+  var identifier = sectionIndex + "," + index;
+
   var acceptFileType = {
     Any: "",
     Image: "image/*",
@@ -32,6 +52,7 @@ const renderQuestion = ({
     PDFs: ".pdf",
     DOCs: ".doc, .docx",
   };
+
   var recordStatusMapping = {
     media_aborted: "Error",
     permission_denied: "Check Permission",
@@ -46,6 +67,10 @@ const renderQuestion = ({
     stopping: "Stopping",
     stopped: "Stopped Recording",
   };
+
+  //   const { status, startRecording, stopRecording, mediaBlobUrl } =
+  //     useReactMediaRecorder({ video: true });
+
   var questionBox = null;
   let questionFilesBox = questionFiles ? (
     questionFiles.map((fileData, index) => {
@@ -104,20 +129,16 @@ const renderQuestion = ({
           <div className="row justify-content-center d-flex">
             {questionFilesBox}
           </div>
-          <textarea className="form-control" rows="5"></textarea>
+          <textarea
+            className="form-control"
+            name={identifier}
+            rows="5"
+            required
+            type="text"
+            onChange={onResponseChange}
+          />
         </>
       );
-      break;
-    case "long_ans":
-      //   questionBox = (
-      //     <>
-      //       <p className="text-muted mb-1 small">Short answer type question.</p>
-      //       <div className="row justify-content-center d-flex">
-      //         {questionFilesBox}
-      //       </div>
-      //       <textarea className="form-control" rows="10"></textarea>
-      //     </>
-      //   );
       break;
     case "checkbox":
       questionBox = (
@@ -131,8 +152,10 @@ const renderQuestion = ({
               <input
                 className="form-check-input"
                 type="radio"
-                name={true ? "radio1" : ""}
+                name={identifier}
+                id="checker"
                 value={index}
+                onChange={onResponseChange}
               />
               <label className="form-check-label">{data.name}</label>
             </div>
@@ -153,7 +176,10 @@ const renderQuestion = ({
           <ReactMediaRecorder
             video={ansFileType === "Video"}
             audio={ansFileType === "Audio"}
-            onStop={(blobUrl, blob) => console.log("Upload", blobUrl, blob)}
+            onStop={(blobUrl, blob) => {
+              console.log("Upload", blobUrl, blob);
+              // onFilesChange(identifier, blob);
+            }}
             render={({
               status,
               startRecording,
@@ -185,12 +211,14 @@ const renderQuestion = ({
                     <p className="mb-0">Controls:</p>
                     <div className="d-flex flex-column">
                       <button
+                        type="button"
                         className="btn btn-success mt-2"
                         onClick={startRecording}
                       >
                         Start Recording
                       </button>
                       <button
+                        type="button"
                         className="btn btn-danger mt-2"
                         onClick={stopRecording}
                       >
@@ -214,7 +242,11 @@ const renderQuestion = ({
           <div className="row justify-content-center d-flex">
             {questionFilesBox}
           </div>
-          <Input type="file" accept={acceptFileType[ansFileType]} />
+          <Input
+            type="file"
+            accept={acceptFileType[ansFileType]}
+            onChange={onResponseChange}
+          />
         </>
       );
       break;
@@ -224,7 +256,9 @@ const renderQuestion = ({
   return (
     <>
       <h5 className="mb-0">
-        <b>Question {index}.</b> {question}
+        <b>Question {index}.</b>
+
+        {question}
         {isRequired && <span className="text-danger ml-1">*</span>}
       </h5>
       {questionBox}
@@ -232,7 +266,25 @@ const renderQuestion = ({
   );
 };
 
-const TestPreview = () => {
+const TestGive = () => {
+  const [response, setResponse] = useState({});
+  const changeResponse = (e) => {
+    var l = e.target.name.split(",");
+    l[0].toString();
+    if (typeof l[1] != "undefined") l[1].toString();
+    if (typeof response[l[0]] === "undefined") {
+      response[l[0]] = {};
+    }
+    setResponse(response, (response[l[0]][l[1]] = e.target.value));
+  };
+
+  const changeFiles = (question, url) => {
+    var l = question.split(",");
+    if (response[l[0]] === undefined) {
+      response[l[0]] = {};
+    }
+    setResponse(response, (response[l[0]][l[1]] = url));
+  };
   const [components, setComponents] = useState([
     {
       title: "",
@@ -284,10 +336,6 @@ const TestPreview = () => {
     );
   }, [testId]);
 
-  const editTest = (e) => {
-    history.push(`/tests/edit/${testId}`);
-  };
-
   if (pageLoading)
     return (
       <div className="hardCenter">
@@ -299,73 +347,156 @@ const TestPreview = () => {
       </div>
     );
 
+  const submitTest = (e) => {
+    e.preventDefault();
+    // console.log(response);
+    const student = JSON.parse(window.localStorage["user"]);
+    var decoded = jwt_decode(student["token"]);
+    TestService.getAssignedUsers(testId).then(
+      (res) => {
+        const users = res.data;
+        for (let user of users) {
+          if (user["email"] === decoded["email"]) {
+            TestService.putUserResponse(user["_id"], response);
+            console.log("Submitted");
+            // return <Redirect to="/dashboard" />;
+            // setTimeout(() => {}, 3000);
+            history.push(`/dashboard`);
+          }
+        }
+      },
+      (error) => {
+        return <Redirect to="/dashboard" />;
+      }
+    );
+  };
+
+  const isAdmin = () => {
+    // var admin = window.localStorage["user"];
+    var admin = JSON.parse(window.localStorage["user"].toString());
+    console.log(admin.name);
+
+    if (admin["type"] === "A") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  const editTest = (e) => {
+    history.push(`/tests/edit/${testId}`);
+  };
+
   return (
-    <Container fluid>
-      <Row>
-        <Col className="ml-3" md="7">
-          <Row>
-            <h2 className="mt-3 font-weight-bold text-dark mb-0">
-              {testData.title}
-            </h2>
-          </Row>
-          <Row>
-            <p className="text-muted">
-              Description: {testData.data.description}
-            </p>
-          </Row>
-        </Col>
-        <Col className="mt-3">
-          <Row>
-            <Col md="15">
-              <FormGroup>
-                <Label>Start Time</Label>
-                <Input
-                  disabled={true}
-                  value={new Date(testData.data.duration.start)}
-                />
-              </FormGroup>
-            </Col>
-            <Col md="15" className="mt-3">
-              <FormGroup>
-                <Label>End Time</Label>
-                <Input
-                  disabled={true}
-                  value={new Date(testData.data.duration.end)}
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-      <hr />
-      {components.map((section, sectionIndex) => (
-        <Container
-          key={sectionIndex}
-          className="bg-white rounded p-4 p-lg-5 shadow-sm mt-4"
-          fluid
-        >
-          <h4 className="text-center font-weight-bold mb-0">{section.title}</h4>
-          <p className="text-center text-muted mb-0">
-            {section.data.description}
-          </p>
-          <hr />
-          {section.components.map((question, questionIndex) => (
-            <div key={questionIndex}>
-              <div className="mt-3 mb-4">
-                {renderQuestion({ ...question, index: questionIndex + 1 })}
-              </div>
+    <>
+      <Container fluid>
+        <Row>
+          <Col className="ml-3" md="7">
+            <Row>
+              <h2 className="mt-3 font-weight-bold text-dark mb-0">
+                {testData.title}
+              </h2>
+            </Row>
+            <Row>
+              <p className="text-muted">
+                Description: {testData.data.description}
+              </p>
+            </Row>
+          </Col>
+          <Col className="mt-3">
+            {/* <Duration
+              md="5"
+              label="Hours"
+              type="text"
+              disabled={true}
+              value={new Date(testData.data.duration.start)}
+            />
+            <Duration
+              label="Minutes"
+              md="5"
+              type="text"
+              disabled={true}
+              value={new Date(testData.data.duration.end)}
+            /> */}
+            <Row>
+              <Col md="15">
+                <FormGroup>
+                  <Label>Start Time</Label>
+                  <Input
+                    disabled={true}
+                    value={new Date(testData.data.duration.start)}
+                  />
+                </FormGroup>
+              </Col>
+              <Col md="15" className="mt-3">
+                <FormGroup>
+                  <Label>End Time</Label>
+                  <Input
+                    disabled={true}
+                    value={new Date(testData.data.duration.end)}
+                  />
+                </FormGroup>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <hr />
+        <form onSubmit={submitTest}>
+          {" "}
+          {components.map((section, sectionIndex) => (
+            <Container
+              key={sectionIndex}
+              className="bg-white rounded p-4 p-lg-5 shadow-sm mt-4"
+              fluid
+            >
+              <h4 className="text-center font-weight-bold mb-0">
+                {section.title}
+              </h4>
+              <p className="text-center text-muted mb-0">
+                {section.data.description}
+              </p>
               <hr />
-            </div>
+
+              {section.components.map((question, questionIndex) => (
+                <div key={questionIndex}>
+                  <div className="mt-3 mb-4">
+                    {isAdmin()
+                      ? RenderQuestion({
+                          ...question,
+                          index: questionIndex + 1,
+                        })
+                      : RenderQuestion({
+                          ...question,
+                          question_details: question,
+                          index: questionIndex + 1,
+                          sectionIndex: sectionIndex + 1,
+                          onResponseChange: changeResponse,
+                          onFilesChange: changeFiles,
+                        })}
+                  </div>
+                  <hr />
+                </div>
+              ))}
+            </Container>
           ))}
-        </Container>
-      ))}
-      <div className="mt-4 mb-3 mb-lg-5 d-flex">
-        <Button onClick={(e) => editTest(e)} color="success">
-          Edit Test
-        </Button>
-      </div>
-    </Container>
+          {isAdmin() ? (
+            <div className="mt-4 mb-3 mb-lg-5 d-flex">
+              <Button onClick={(e) => editTest(e)} color="success">
+                Edit Test
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-4 mb-3 mb-lg-5 d-flex">
+              <Button color="success">Submit</Button>
+            </div>
+          )}
+          {/* <div className="mt-4 mb-3 mb-lg-5 d-flex">
+          <Button color="success">Submit</Button>
+        </div> */}
+        </form>
+      </Container>
+      <ToastContainer />
+    </>
   );
 };
 
-export default TestPreview;
+export default TestGive;

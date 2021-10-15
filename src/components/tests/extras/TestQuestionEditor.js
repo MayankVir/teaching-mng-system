@@ -28,20 +28,18 @@ const TestQuestionEditor = ({
     isRequired,
     questionFiles,
     ansFileType,
+    ans_mcq,
   } = questionData;
 
   const history = useHistory();
   const [rSelected, setRSelected] = useState(null);
+  const [optionChecked, setOptionchecked] = useState([]);
+  // const [isChecked, setIschecked] = useState(false);
 
   const changeQuestion = (event) => {
     updateQuestion({
-      id,
-      type,
-      options,
+      ...questionData,
       question: event.target.value,
-      isRequired,
-      questionFiles,
-      ansFileType,
     });
   };
 
@@ -51,26 +49,12 @@ const TestQuestionEditor = ({
     TestService.uploadFile(file, testId).then(
       (response) => {
         let questionObj = { ...response.data, name: file.name };
-        if (questionFiles)
-          updateQuestion({
-            id,
-            type,
-            options,
-            question,
-            isRequired,
-            questionFiles: [...questionFiles, questionObj],
-            ansFileType,
-          });
-        else
-          updateQuestion({
-            id,
-            type,
-            options,
-            question,
-            isRequired,
-            questionFiles: [questionObj],
-            ansFileType,
-          });
+        updateQuestion({
+          ...questionData,
+          questionFiles: questionFiles
+            ? [...questionFiles, questionObj]
+            : [questionObj],
+        });
       },
       (error) => {
         console.log(error);
@@ -82,13 +66,8 @@ const TestQuestionEditor = ({
     const _questionFiles = [...questionFiles];
     _questionFiles.splice(index, 1);
     updateQuestion({
-      id,
-      type,
-      options,
-      question,
-      isRequired,
+      ...questionData,
       questionFiles: _questionFiles,
-      ansFileType,
     });
   };
 
@@ -97,74 +76,38 @@ const TestQuestionEditor = ({
     if (event.target.value === "file") changeDefaultSubType = "Any";
     else if (event.target.value === "record") changeDefaultSubType = "Video";
     updateQuestion({
-      id,
+      ...questionData,
       type: event.target.value,
-      options,
-      question,
-      isRequired,
-      questionFiles,
       ansFileType: changeDefaultSubType,
     });
   };
 
   const changeRequired = (event) => {
     updateQuestion({
-      id,
-      type,
-      options,
-      question,
+      ...questionData,
       isRequired: event.target.checked,
-      questionFiles,
-      ansFileType,
     });
   };
 
   const addOption = () => {
-    if (options) {
-      updateQuestion({
-        id,
-        type,
-        options: [...options, ""],
-        question,
-        isRequired,
-        questionFiles,
-        ansFileType,
-      });
-    } else {
-      updateQuestion({
-        id,
-        type,
-        options: [""],
-        question,
-        isRequired,
-        questionFiles,
-        ansFileType,
-      });
-    }
+    updateQuestion({
+      ...questionData,
+      options: options ? [...options, { name: "" }] : [{ name: "" }],
+    });
   };
 
   const changeOption = (event) => {
     let bOptions = [...options];
-    bOptions[event.target.name] = event.target.value;
+    bOptions[event.target.name].name = event.target.value;
     updateQuestion({
-      id,
-      type,
+      ...questionData,
       options: bOptions,
-      question,
-      isRequired,
-      questionFiles,
-      ansFileType,
     });
   };
 
   const changeAnsFileType = (event) => {
     updateQuestion({
-      id,
-      type,
-      options,
-      question,
-      isRequired,
-      questionFiles,
+      ...questionData,
       ansFileType: event.target.value,
     });
   };
@@ -173,18 +116,35 @@ const TestQuestionEditor = ({
     let bOptions = [...options];
     bOptions.splice(toDel, 1);
     updateQuestion({
-      id,
-      type,
+      ...questionData,
       options: bOptions,
-      question,
-      isRequired,
-      questionFiles,
-      ansFileType,
     });
   };
 
-  const optionChanged = () => {
-    console.log();
+  // const handleCheckChange = (index) => {
+
+  // if (!optionChecked.includes(index)) {
+  //   setIschecked(true);
+  // }
+  // else {
+  //   setIschecked(false);
+  // }
+  // };
+
+  const answerSaved = (index) => {
+    const _optionChecked = optionChecked;
+    if (!_optionChecked.includes(index)) {
+      _optionChecked.push(index);
+    } else {
+      _optionChecked.splice(_optionChecked.indexOf(index), 1);
+    }
+    // console.log(_optionChecked);
+    setOptionchecked(_optionChecked);
+    updateQuestion({
+      ...questionData,
+      ans_mcq: optionChecked,
+    });
+    console.log(ans_mcq);
   };
 
   const renderOptions = () => {
@@ -192,14 +152,27 @@ const TestQuestionEditor = ({
       <div className="mt-3">
         <div className="mt-2">
           <Label className="small mb-0">Options</Label>
-          {console.log(options)}
+          {/* {console.log(options)} */}
           {options &&
             options.map((data, index) => (
-              <Row className="mb-2" key={index}>
+              <Row className="mb-2" key={`${questionData.id}-option-${index}`}>
+                <Col
+                  xs="auto"
+                  className="d-flex align-items-center justify-content-center px-0"
+                >
+                  <input
+                    type={rSelected === 1 ? "radio" : "checkbox"}
+                    style={{ marginLeft: "10px" }}
+                    name="options"
+                    className="border-primary"
+                    checked={optionChecked.includes(index)}
+                    onChange={() => answerSaved(index)}
+                  />
+                </Col>
                 <Col>
                   <Input
                     type="text"
-                    value={data}
+                    value={data.name}
                     placeholder="Your option here"
                     onChange={changeOption}
                     name={index}
@@ -217,18 +190,6 @@ const TestQuestionEditor = ({
                     onClick={() => {
                       deleteOption(index);
                     }}
-                  />
-                </Col>
-                <Col
-                  xs="auto"
-                  className="d-flex align-items-center justify-content-center px-0"
-                >
-                  <input
-                    type={rSelected === 1 ? "radio" : "checkbox"}
-                    style={{ marginLeft: "10px" }}
-                    name="radio1"
-                    className="border-primary"
-                    onChange={optionChanged(index)}
                   />
                 </Col>
               </Row>
@@ -309,6 +270,7 @@ const TestQuestionEditor = ({
               value={type}
             >
               <option value="descriptive">Descriptive</option>
+              {/* <option value="long_ans">Long Ans</option> */}
               <option value="checkbox">Multiple Choice</option>
               <option value="record">Record</option>
               <option value="file">File Upload</option>

@@ -38,12 +38,12 @@ const RenderQuestion = ({
   var questionFiles = question_details["questionFiles"];
   var ansFileType = question_details["ansFileType"];
   var identifier = sectionIndex + "," + index;
-  var identifier = sectionIndex + "," + index;
+  // var identifier = sectionIndex + "," + index;
   var questionBox = null;
-  if (response != undefined) {
-    if (response[sectionIndex] != undefined) {
-      if (response[sectionIndex][index] != undefined) {
-        var acceptFileType = {
+  if (response !== undefined) {
+    if (response[sectionIndex] !== undefined) {
+      if (response[sectionIndex][index] !== undefined) {
+        acceptFileType = {
           Any: "",
           Image: "image/*",
           Video: "video/*",
@@ -51,15 +51,15 @@ const RenderQuestion = ({
           PDFs: ".pdf",
           DOCs: ".doc, .docx",
         };
-        var type = question_details["type"];
-        var question = question_details["question"];
-        var options = question_details["options"];
-        var isRequired = question_details["isRequired"];
-        var questionFiles = question_details["questionFiles"];
-        var ansFileType = question_details["ansFileType"];
-        var identifier = sectionIndex + "," + index;
-        var identifier = sectionIndex + "," + index;
-        var questionBox = null;
+        type = question_details["type"];
+        question = question_details["question"];
+        options = question_details["options"];
+        isRequired = question_details["isRequired"];
+        questionFiles = question_details["questionFiles"];
+        ansFileType = question_details["ansFileType"];
+        identifier = sectionIndex + "," + index;
+        // identifier = sectionIndex + "," + index;
+        questionBox = null;
         let questionFilesBox = questionFiles ? (
           questionFiles.map((fileData, index) => {
             switch (fileData.name.split(".").pop()) {
@@ -115,7 +115,7 @@ const RenderQuestion = ({
         );
 
         switch (type) {
-          case "short_ans":
+          case "descriptive":
             questionBox = (
               <>
                 <p className="text-muted mb-1 small">
@@ -128,19 +128,19 @@ const RenderQuestion = ({
               </>
             );
             break;
-          case "long_ans":
-            questionBox = (
-              <>
-                <p className="text-muted mb-1 small">
-                  Long answer type question.
-                </p>
-                <div className="row justify-content-center d-flex">
-                  {questionFilesBox}
-                </div>
-                <p className="form-control">{response[sectionIndex][index]}</p>
-              </>
-            );
-            break;
+          // case "long_ans":
+          //   questionBox = (
+          //     <>
+          //       <p className="text-muted mb-1 small">
+          //         Long answer type question.
+          //       </p>
+          //       <div className="row justify-content-center d-flex">
+          //         {questionFilesBox}
+          //       </div>
+          //       <p className="form-control">{response[sectionIndex][index]}</p>
+          //     </>
+          //   );
+          //   break;
           case "checkbox":
             questionBox = (
               <>

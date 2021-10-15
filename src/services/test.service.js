@@ -50,6 +50,13 @@ const getOneResponse = (email) => {
   });
 };
 
+const putUserResponse = (id, response) => {
+  const body = { response: response };
+  return axios.put(BASE_URL + "api/quizassign/" + id, body, {
+    headers: authHeader(),
+  });
+};
+
 export default {
   getAllTests,
   getOneTest,
@@ -59,4 +66,5 @@ export default {
   assignEmail,
   getAssignedUsers,
   getOneResponse,
+  putUserResponse,
 };

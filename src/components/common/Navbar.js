@@ -4,8 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { mdiArrowLeft, mdiLogout, mdiMenu } from "@mdi/js";
 import Icon from "@mdi/react";
-import "./Common.css";
+// import "./Common.css";
 import { logout } from "../../actions/auth";
+import {
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 
 import { toggleSidebar } from "../../actions/sidebar";
 
@@ -37,10 +43,10 @@ const Navbar = ({ user }) => {
   };
 
   return (
-    <nav className="nav-bar">
+    <nav className="navbar navbar-light bg-white border fixed-top px-3">
       {user && (
         <div
-          className="mr-auto text-primary nav-left"
+          className="mr-auto text-primary d-flex"
           type="button"
           onClick={_toggleSidebar}
         >
@@ -50,13 +56,50 @@ const Navbar = ({ user }) => {
           </div>
         </div>
       )}
-      <Link to={user ? "dashboard" : "/"} className="navbar-svg">
+      <Link
+        to={user ? "dashboard" : "/"}
+        // className="navbar-svg"
+        className="navbar-brand m-0"
+      >
         <SVGI />
       </Link>
-      <div className="nav-links">
+      <ul
+        // className="nav-links">
+        className="nav ml-auto"
+      >
         {user ? (
           <>
-            <div className="nav-item loggedInUser">
+            <li className="nav-item">
+              <UncontrolledDropdown>
+                <DropdownToggle className="border-0 bg-white text-dark">
+                  <div className="d-flex align-items-center justify-content-center">
+                    <img
+                      src={`https://ui-avatars.com/api/?background=4F7CAC&color=fff&name=${userName()
+                        .split(" ")
+                        .join("+")}`}
+                      width="30px"
+                      className="rounded-circle"
+                      alt="Avi Garg"
+                    />
+                    <p
+                      className="mb-0 pl-2 small d-none d-lg-block"
+                      style={{ marginLeft: "5px" }}
+                    >
+                      {userName()}
+                    </p>
+                  </div>
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem
+                    className="no-focus d-flex align-items-center"
+                    onClick={logOut}
+                  >
+                    <Icon size={1} path={mdiLogout} className="mr-1" /> Logout
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            </li>
+            {/* <div className="nav-item loggedInUser">
               <div className="userName">
                 <img
                   src={`https://ui-avatars.com/api/?background=4F7CAC&color=fff&name=${userName()
@@ -70,7 +113,7 @@ const Navbar = ({ user }) => {
               <div className="userLogout" onClick={logOut}>
                 <Icon size={1} path={mdiLogout} className="mr-1" /> Logout
               </div>
-            </div>
+            </div> */}
           </>
         ) : (
           <>
@@ -86,7 +129,7 @@ const Navbar = ({ user }) => {
             </div>
           </>
         )}
-      </div>
+      </ul>
     </nav>
   );
 };

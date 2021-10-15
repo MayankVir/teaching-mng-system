@@ -19,12 +19,12 @@ const getAllUsers = () => {
 //   });
 // };
 
-const putUserResponse = (id, response) => {
-  const body = { response: response };
-  return axios.put(BASE_URL + "api/quizassign/" + id, body, {
-    headers: authHeader(),
-  });
-};
+// const putUserResponse = (id, response) => {
+//   const body = { response: response };
+//   return axios.put(BASE_URL + "api/quizassign/" + id, body, {
+//     headers: authHeader(),
+//   });
+// };
 const putUserReviewScore = (id, marking) => {
   const body = { marking: marking };
   return axios.put(BASE_URL + "api/quizassign/" + id, body, {
@@ -88,7 +88,7 @@ export default {
   getPublicContent,
   // getAssignedUsers,
   getAllUsers,
-  putUserResponse,
+  // putUserResponse,
   putUserReviewScore,
   getDetails,
   uploadFile,

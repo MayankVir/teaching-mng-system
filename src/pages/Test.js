@@ -13,6 +13,7 @@ import { Link, useHistory } from "react-router-dom";
 import TestService from "../services/test.service";
 import { Col, Row } from "reactstrap";
 import "../assets/css/Dashboard.css";
+// import GiveTest from "../components/GiveTest";
 
 const Test = () => {
   const [testList, setTestList] = useState([]);
@@ -198,7 +199,7 @@ const Test = () => {
                               className="ml-2 hoverPointer"
                               title="Give test"
                               onClick={() =>
-                                history.push(`/tests/videomonitor/${data._id}`)
+                                history.push(`/tests/giveTest/${data._id}`)
                               }
                               style={{ cursor: "pointer" }}
                             />

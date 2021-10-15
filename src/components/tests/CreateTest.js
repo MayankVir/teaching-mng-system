@@ -52,7 +52,7 @@ const CreateTest = (props) => {
           title: response.data.title ? response.data.title : "",
           data: {
             description: "",
-            duration: { start: 0, end: 0 },
+            duration: { start: new Date(), end: new Date() },
             assign: [],
             ...response.data.data,
           },
@@ -160,6 +160,7 @@ const CreateTest = (props) => {
         ansFileType: "Any",
         score: 0,
         review: "",
+        ans_mcq: [],
       },
     ];
     setComponents(_components);
@@ -202,7 +203,7 @@ const CreateTest = (props) => {
 
   const handleDurationStart = (event) => {
     const start = event._d.getTime();
-    console.log(event._d.getTime());
+    console.log(event._d);
     setTestData((prevData) => ({
       ...prevData,
       data: {

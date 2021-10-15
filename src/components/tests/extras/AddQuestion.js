@@ -14,6 +14,7 @@ const AddQuestion = ({
   duplicateQuestion,
   addQuestion,
 }) => {
+  // const [optionChecked, setOptionchecked] = useState([]);
   return (
     <div className="mt-3">
       <h3>Questions</h3>
@@ -37,6 +38,8 @@ const AddQuestion = ({
                 updateQuestion={(data) =>
                   updateQuestion(sectionIndex, questionIndex, data)
                 }
+                // optionChecked={optionChecked}
+                // setOptionchecked={setOptionchecked}
               />
             }
             deleteAction={() => deleteQuestion(questionIndex, sectionIndex)}

@@ -21,6 +21,7 @@ const AddSection = ({
 }) => {
   return (
     <div>
+      {/* {console.log(components)} */}
       <div
         list={components}
         setList={setComponents}
