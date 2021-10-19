@@ -51,10 +51,13 @@ const getOneResponse = (email) => {
 };
 
 const putUserResponse = (id, response) => {
-  const body = { response: response };
-  return axios.put(BASE_URL + "api/quizassign/" + id, body, {
-    headers: authHeader(),
-  });
+  return axios.put(
+    BASE_URL + `api/quizassign/updateresponse?quiz=${id}`,
+    { response },
+    {
+      headers: authHeader(),
+    }
+  );
 };
 
 export default {

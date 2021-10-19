@@ -14,15 +14,17 @@ import Test from "./pages/Test";
 import Sidebar from "./components/common/Sidebar";
 import CreateTest from "./components/tests/CreateTest";
 import PreviewTest from "./components/tests/PreviewTest";
+// import { ToastContainer, toast } from "react-toast";
 
 import Authentication from "./components/common/Authentication";
 
 import { useDispatch, useSelector } from "react-redux";
 import { clearMessage } from "./actions/message";
 import DeleteTest from "./components/tests/extras/DeleteTest";
-import GiveScore from "./components/tests/GiveScore";
+import AttemptedStudents from "./components/tests/AttemptedStudents";
 import SeeScore from "./components/tests/GetScore";
 import GiveTest from "./components/tests/GiveTest";
+import ReviewTest from "./components/tests/ReviewTest";
 
 const history = createBrowserHistory();
 const App = () => {
@@ -70,7 +72,12 @@ const App = () => {
             <Authentication
               exact
               path="/tests/students/:id"
-              component={GiveScore}
+              component={AttemptedStudents}
+            />
+            <Authentication
+              exact
+              path="/tests/review/:id/"
+              component={ReviewTest}
             />
             <Authentication
               exact
@@ -87,6 +94,7 @@ const App = () => {
           </Switch>
         </div>
       </div>
+      {/* <ToastContainer /> */}
     </Router>
   );
 };

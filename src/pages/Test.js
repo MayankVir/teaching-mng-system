@@ -58,7 +58,7 @@ const Test = () => {
 
   return (
     <>
-      <div className="pt-3 container-fluid">
+      <div className="pt-3 container-fluid" style={{ padding: "15px 30px" }}>
         <div className="row smallerScreen">
           <div className="col-12 searchCreateTest">
             <div className="input-group mb-3 search">

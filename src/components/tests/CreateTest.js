@@ -8,6 +8,7 @@ import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import AddSection from "./extras/AddSection";
 import "../common/Common.css";
+import { ToastContainer, toast } from "react-toast";
 // import DatePicker from "react-datepicker";
 // import { DateTime } from "react-datetime-bootstrap";
 // import "react-datepicker/dist/react-datepicker.css";
@@ -85,6 +86,7 @@ const CreateTest = (props) => {
       .then((result) => {
         const emails = testData.data.assign;
         console.log(emails);
+        toast.success("Test Created Successfully");
         TestService.assignEmail(emails, testId)
           .then(
             (response) => {
@@ -250,7 +252,7 @@ const CreateTest = (props) => {
       {!isAdmin() ? (
         <div>You are not Authorised here</div>
       ) : (
-        <div className="container-fluid">
+        <div className="container-fluid" style={{ padding: "15px 30px" }}>
           <div className="row pt-3">
             <div className="col">
               {pageLoading ? (

@@ -16,11 +16,15 @@ import {
   ReactMediaRecorder,
   useReactMediaRecorder,
 } from "react-media-recorder";
-import { ToastContainer, toast } from "react-toastify";
+// import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toast";
+import Countdown from "react-countdown";
 // import Duration from "./extras/Duration";
-
 import jwt_decode from "jwt-decode";
+import uploadService from "../../services/upload.service";
+
+var mime = require("mime-types");
 
 const RenderQuestion = ({
   type,
@@ -36,12 +40,12 @@ const RenderQuestion = ({
   onResponseChange,
   onFilesChange,
 }) => {
-  //   var type = question_details["type"];
-  //   var question = question_details["question"];
-  //   var options = question_details["options"];
-  //   var isRequired = question_details["isRequired"];
-  //   var questionFiles = question_details["questionFiles"];
-  //   var ansFileType = question_details["ansFileType"];
+  // var type = question_details["type"];
+  // var question = question_details["question"];
+  // var options = question_details["options"];
+  // var isRequired = question_details["isRequired"];
+  // var questionFiles = question_details["questionFiles"];
+  // var ansFileType = question_details["ansFileType"];
   var identifier = sectionIndex + "," + index;
 
   var acceptFileType = {
@@ -74,49 +78,37 @@ const RenderQuestion = ({
   var questionBox = null;
   let questionFilesBox = questionFiles ? (
     questionFiles.map((fileData, index) => {
-      switch (fileData.name.split(".").pop()) {
-        case "jpg":
-          return (
-            <div className="col-6" key={index}>
-              <img
-                className="mb-3"
-                style={{ maxWidth: "100%" }}
-                src={fileData.url}
-                alt={fileData.name}
-              />
-            </div>
-          );
-        case "png":
-          return (
-            <div className="col-6" key={index}>
-              <img
-                className="mb-3"
-                style={{ maxWidth: "100%" }}
-                src={fileData.url}
-                alt={fileData.name}
-              />
-            </div>
-          );
-        case "mp4":
-          return (
-            <div className="col-6" key={index}>
-              <video controls className="mb-3" style={{ maxWidth: "100%" }}>
-                <source src={fileData.url} />
-              </video>
-            </div>
-          );
-        case "mp3":
-          return (
-            <div className="col-6" key={index}>
-              {" "}
-              <audio controls className="mb-3" style={{ width: "100%" }}>
-                <source src={fileData.url} />
-              </audio>
-            </div>
-          );
-        default:
-          return <span key={index}></span>;
-      }
+      const fileType = mime.lookup(fileData.name);
+      const fileExtn = fileType.substring(0, fileType.indexOf("/"));
+      console.log(fileExtn);
+      if (fileExtn === "image") {
+        return (
+          <div className="col-6" key={index}>
+            <img
+              className="mb-3"
+              style={{ maxWidth: "100%" }}
+              src={fileData.url}
+              alt={fileData.name}
+            />
+          </div>
+        );
+      } else if (fileExtn === "video") {
+        return (
+          <div className="col-6" key={index}>
+            <video controls className="mb-3" style={{ maxWidth: "100%" }}>
+              <source src={fileData.url} />
+            </video>
+          </div>
+        );
+      } else if (fileExtn === "audio") {
+        return (
+          <div className="col-6" key={index}>
+            <audio controls className="mb-3" style={{ maxWidth: "100%" }}>
+              <source src={fileData.url} />
+            </audio>
+          </div>
+        );
+      } else return <span key={index}></span>;
     })
   ) : (
     <></>
@@ -244,8 +236,10 @@ const RenderQuestion = ({
           </div>
           <Input
             type="file"
+            name={identifier}
             accept={acceptFileType[ansFileType]}
-            onChange={onResponseChange}
+            // onChange={onResponseChange}
+            onChange={onFilesChange}
           />
         </>
       );
@@ -269,6 +263,9 @@ const RenderQuestion = ({
 const TestGive = () => {
   const [response, setResponse] = useState({});
   const changeResponse = (e) => {
+    console.log("Before Changing Response: ", response);
+    // console.log(e.target.files);
+    console.log(e);
     var l = e.target.name.split(",");
     l[0].toString();
     if (typeof l[1] != "undefined") l[1].toString();
@@ -276,14 +273,35 @@ const TestGive = () => {
       response[l[0]] = {};
     }
     setResponse(response, (response[l[0]][l[1]] = e.target.value));
+    console.log("After Changing Response: ", response);
   };
 
-  const changeFiles = (question, url) => {
-    var l = question.split(",");
-    if (response[l[0]] === undefined) {
+  const changeFiles = (event) => {
+    console.log("Before Changing File: ", response);
+    var file = event.target.files[0];
+    console.log(file);
+    var answerObj;
+    var l = event.target.name.split(",");
+    l[0].toString();
+    if (typeof l[1] != "undefined") l[1].toString();
+    if (typeof response[l[0]] === "undefined") {
       response[l[0]] = {};
     }
-    setResponse(response, (response[l[0]][l[1]] = url));
+    console.log(l);
+    uploadService.uploadFile(file, testId).then(
+      async (res) => {
+        answerObj = { ...res.data, name: file.name };
+        console.log(res);
+        await setResponse(response, (response[l[0]][l[1]] = answerObj));
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    // if (response[l[0]] === undefined) {
+    //   response[l[0]] = {};
+    // }
+    console.log("After Changing File: ", response);
   };
   const [components, setComponents] = useState([
     {
@@ -349,26 +367,14 @@ const TestGive = () => {
 
   const submitTest = (e) => {
     e.preventDefault();
-    // console.log(response);
-    const student = JSON.parse(window.localStorage["user"]);
-    var decoded = jwt_decode(student["token"]);
-    TestService.getAssignedUsers(testId).then(
-      (res) => {
-        const users = res.data;
-        for (let user of users) {
-          if (user["email"] === decoded["email"]) {
-            TestService.putUserResponse(user["_id"], response);
-            console.log("Submitted");
-            // return <Redirect to="/dashboard" />;
-            // setTimeout(() => {}, 3000);
-            history.push(`/dashboard`);
-          }
-        }
-      },
-      (error) => {
-        return <Redirect to="/dashboard" />;
-      }
-    );
+    console.log("HII");
+    console.log(response);
+    TestService.putUserResponse(testId, response)
+      .then(() => {
+        toast.success("Test Submitted Successfully");
+        history.push(`/dashboard`);
+      })
+      .catch(toast.error("Something is Fishy!!"));
   };
 
   const isAdmin = () => {
@@ -386,11 +392,18 @@ const TestGive = () => {
     history.push(`/tests/edit/${testId}`);
   };
 
+  const isTimeLeft = () => {
+    const endTime = testData.data.duration.end;
+    const currentTime = new Date();
+    if (currentTime <= endTime) return true;
+    return false;
+  };
+
   return (
     <>
-      <Container fluid>
+      <Container fluid style={{ padding: "20px 40px" }}>
         <Row>
-          <Col className="ml-3" md="7">
+          <Col className="ml-3" md="9">
             <Row>
               <h2 className="mt-3 font-weight-bold text-dark mb-0">
                 {testData.title}
@@ -402,39 +415,63 @@ const TestGive = () => {
               </p>
             </Row>
           </Col>
-          <Col className="mt-3">
-            {/* <Duration
-              md="5"
-              label="Hours"
-              type="text"
-              disabled={true}
-              value={new Date(testData.data.duration.start)}
-            />
-            <Duration
-              label="Minutes"
-              md="5"
-              type="text"
-              disabled={true}
-              value={new Date(testData.data.duration.end)}
-            /> */}
+          <Col
+            className="mt-3"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-start",
+            }}
+          >
             <Row>
               <Col md="15">
-                <FormGroup>
-                  <Label>Start Time</Label>
-                  <Input
-                    disabled={true}
-                    value={new Date(testData.data.duration.start)}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md="15" className="mt-3">
-                <FormGroup>
-                  <Label>End Time</Label>
-                  <Input
-                    disabled={true}
-                    value={new Date(testData.data.duration.end)}
-                  />
-                </FormGroup>
+                {isTimeLeft() ? (
+                  <FormGroup
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    {isTimeLeft() ? (
+                      <Label style={{ fontSize: "1.25rem" }}>
+                        Time Remaining
+                      </Label>
+                    ) : (
+                      <></>
+                    )}
+                    <div
+                      style={{
+                        fontSize: "1.5rem",
+                        border: "1px solid black",
+                        background: "white",
+                        borderRadius: "10px",
+                        padding: "5px 10px",
+                      }}
+                    >
+                      <Countdown
+                        date={
+                          Date.now() + (testData.data.duration.end - Date.now())
+                        }
+                      >
+                        <div>Time Up Kiddo!!</div>
+                      </Countdown>
+                    </div>
+                  </FormGroup>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: "1.5rem",
+                      border: "1px solid black",
+                      background: "white",
+                      borderRadius: "10px",
+                      padding: "5px 10px",
+                    }}
+                  >
+                    Time Up Kiddo!!
+                  </div>
+                )}
               </Col>
             </Row>
           </Col>
@@ -442,6 +479,7 @@ const TestGive = () => {
         <hr />
         <form onSubmit={submitTest}>
           {" "}
+          {/* {JSON.stringify(components)} */}
           {components.map((section, sectionIndex) => (
             <Container
               key={sectionIndex}
@@ -469,6 +507,7 @@ const TestGive = () => {
                           question_details: question,
                           index: questionIndex + 1,
                           sectionIndex: sectionIndex + 1,
+                          response: response,
                           onResponseChange: changeResponse,
                           onFilesChange: changeFiles,
                         })}

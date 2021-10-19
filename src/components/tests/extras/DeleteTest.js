@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "reactstrap";
 import TestService from "../../../services/test.service";
 import { Redirect, useHistory } from "react-router-dom";
+import { ToastContainer, toast } from "react-toast";
 
 const DeleteTest = () => {
   const [deleting, setDeleting] = useState(false);
@@ -45,6 +46,7 @@ const DeleteTest = () => {
     TestService.deleteOneTest(testId).then(
       (response) => {
         setDeleting(false);
+        toast.success("Test Deleted !");
         goBack();
       },
       (error) => {
@@ -92,6 +94,7 @@ const DeleteTest = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

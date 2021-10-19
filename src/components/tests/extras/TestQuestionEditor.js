@@ -12,7 +12,8 @@ import {
   Row,
 } from "reactstrap";
 
-import TestService from "../../../services/test.service";
+// import TestService from "../../../services/test.service";
+import UploadService from "../../../services/upload.service";
 import { useHistory } from "react-router-dom";
 
 const TestQuestionEditor = ({
@@ -46,8 +47,9 @@ const TestQuestionEditor = ({
   const changeQuestionFiles = (event) => {
     let testId = history.location.pathname.split("/").pop();
     var file = event.target.files[0];
-    TestService.uploadFile(file, testId).then(
+    UploadService.uploadFile(file, testId).then(
       (response) => {
+        console.log(response);
         let questionObj = { ...response.data, name: file.name };
         updateQuestion({
           ...questionData,

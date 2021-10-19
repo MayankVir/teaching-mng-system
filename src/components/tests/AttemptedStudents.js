@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import TestService from "../../services/test.service";
 import { useHistory } from "react-router-dom";
-import { Container, Col, Row } from "reactstrap";
+import { Container, Col, Row, Table } from "reactstrap";
 import Icon from "@mdi/react";
-import { mdiEye, mdiEyeOff, mdiLoading } from "@mdi/js";
+import { mdiEye, mdiArrowTopRight, mdiLoading } from "@mdi/js";
 
-const GiveScore = () => {
+const AtttemptedStudents = () => {
   var [studentList, setStudentList] = useState([]);
   let history = useHistory();
   const [pageLoading, setPageLoading] = useState(true);
@@ -44,7 +44,7 @@ const GiveScore = () => {
 
   console.log(studentList);
   return (
-    <Container fluid>
+    <Container fluid style={{ padding: "15px 30px" }}>
       <Row>
         <Col className="ml-3" md="9">
           <Row>
@@ -55,36 +55,40 @@ const GiveScore = () => {
         </Col>
       </Row>
       <hr />
-      {studentList.map((student, studentIndex) => (
-        <Container
-          key={studentIndex}
-          className="bg-white rounded p-4 p-lg-5 shadow-sm mt-4"
-          fluid
-        >
-          <div>{student.email}</div>
-          {student.response ? (
-            <Icon
-              path={mdiEye}
-              size={1}
-              className="ml-2 hoverPointer"
-              title="See Responses"
-              onClick={() =>
-                history.push(`/tests/review/${testId}/${student.email}`)
-              }
-            />
-          ) : (
-            <Icon
-              path={mdiEyeOff}
-              size={1}
-              className="ml-2 hoverPointer"
-              title="No response yet"
-              onClick={() => alert("No reponse given yet")}
-            />
-          )}
-        </Container>
-      ))}
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Student No</th>
+            <th>Student Name</th>
+            <th>Student Email</th>
+            <th>Responses</th>
+          </tr>
+        </thead>
+        <tbody>
+          {studentList.map((student, studentIndex) => (
+            <tr key={studentIndex}>
+              <td>{studentIndex + 1}</td>
+              <td>{student.email}</td>
+              <td>{student.email}</td>
+              <td>
+                {student.response ? (
+                  <Icon
+                    path={mdiArrowTopRight}
+                    size={1}
+                    className="ml-2 hoverPointer"
+                    title="See Responses"
+                    onClick={() => history.push(`/tests/review/${student._id}`)}
+                  />
+                ) : (
+                  <div> No Response yet</div>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </Container>
   );
 };
 
-export default GiveScore;
+export default AtttemptedStudents;

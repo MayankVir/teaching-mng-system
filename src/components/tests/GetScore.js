@@ -375,7 +375,7 @@ const TestResponse = () => {
   console.log(studentResponse);
   console.log(marking);
   return (
-    <Container fluid>
+    <Container fluid style={{ padding: "15px 30px" }}>
       <Row>
         <Col className="ml-3" md="9">
           <Row>

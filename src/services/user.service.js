@@ -74,15 +74,15 @@ const getDetails = () => {
 //   );
 // };
 
-async function uploadFile(file, testId) {
-  let data = new FormData();
-  data.append("file", file);
-  data.append("type", "QUIZ");
-  data.append("id", testId);
-  return await axios.post(BASE_URL + "api/upload", data, {
-    headers: { ...authHeader(), "Content-Type": "multipart/form-data" },
-  });
-}
+// async function uploadFile(file, testId) {
+//   let data = new FormData();
+//   data.append("file", file);
+//   data.append("type", "QUIZ");
+//   data.append("id", testId);
+//   return await axios.post(BASE_URL + "api/upload", data, {
+//     headers: { ...authHeader(), "Content-Type": "multipart/form-data" },
+//   });
+// }
 
 export default {
   getPublicContent,
@@ -91,7 +91,7 @@ export default {
   // putUserResponse,
   putUserReviewScore,
   getDetails,
-  uploadFile,
+  // uploadFile,
   // getAllTests,
   // getOneTest,
   // getOneResponse,
