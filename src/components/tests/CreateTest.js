@@ -238,7 +238,7 @@ const CreateTest = (props) => {
   const isAdmin = () => {
     // var admin = window.localStorage["user"];
     var admin = JSON.parse(window.localStorage["user"].toString());
-    console.log(admin.name);
+    // console.log(admin.name);
 
     if (admin["type"] === "A") {
       return true;

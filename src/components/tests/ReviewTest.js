@@ -23,6 +23,7 @@ import { Media, Player, controls } from "react-media-player";
 import TestService from "../../services/test.service";
 const { PlayPause, MuteUnmute } = controls;
 var mime = require("mime-types");
+
 const ReviewTest = () => {
   const RenderQuestion = ({
     question_details,
@@ -34,10 +35,9 @@ const ReviewTest = () => {
     onScoreChange,
   }) => {
     console.log(response);
-    console.log(sectionIndex, index);
-    if (response != undefined) {
-      if (response[sectionIndex] != undefined) {
-        if (response[sectionIndex][index] != undefined) {
+    if (response !== undefined) {
+      if (response[sectionIndex] !== undefined) {
+        if (response[sectionIndex][index] !== undefined) {
           var acceptFileType = {
             Any: "",
             Image: "image/*",
@@ -96,7 +96,17 @@ const ReviewTest = () => {
                   </div>
                 );
               } else return <span key={index}></span>;
-            })
+            })(
+              console.log(
+                type,
+                question,
+                options,
+                isRequired,
+                questionFiles,
+                ansFileType,
+                identifier
+              )
+            )
           ) : (
             <></>
           );
@@ -106,11 +116,11 @@ const ReviewTest = () => {
               questionBox = (
                 <>
                   <p className="text-muted mb-1 small">
-                    Short answer type question.
+                    Descriptive answer type question.
                   </p>
-                  <div className="row justify-content-center d-flex">
+                  {/* <div className="row justify-content-center d-flex">
                     {questionFilesBox}
-                  </div>
+                  </div> */}
                   <p className="form-control">
                     {response[sectionIndex][index]}
                   </p>
@@ -124,9 +134,15 @@ const ReviewTest = () => {
                     Pick the correct option.
                   </p>
                   <div className="row justify-content-center d-flex">
-                    {questionFilesBox}
+                    {console.log("Questions Files Box: ", questionFilesBox)}
                   </div>
-                  <div>Selected : {response[sectionIndex][index]}</div>
+                  <div>
+                    Selected :{" "}
+                    {
+                      (console.log(response[sectionIndex]),
+                      response[sectionIndex][index])
+                    }
+                  </div>
                 </>
               );
               break;
@@ -199,7 +215,7 @@ const ReviewTest = () => {
         }
       }
     }
-    return <></>;
+    return <>Nothing to show</>;
   };
 
   const [components, setComponents] = useState([
@@ -265,20 +281,29 @@ const ReviewTest = () => {
 
   useEffect(() => {
     setPageLoading(true);
+    console.log("HERE");
     TestService.getOneTest(testId).then(
       (response) => {
+        // console.log(response);
         setTestData({
           title: response.data.title ? response.data.title : "",
           data: {
-            description: "",
-            duration: { hours: 0, minutes: 0 },
+            description: response.data.description
+              ? response.data.description
+              : "",
+            duration: { start: 0, end: 0 },
             ...response.data.data,
           },
         });
         setComponents(response.data.components ? response.data.components : []);
+        console.log("Componenets: ", components);
         TestService.getOneResponse(studentEmail).then(
           (res) => {
-            setStudentResponse(res.data[0]["response"]);
+            console.log(
+              "Setting the response ",
+              res.data[res.data.length - 1]["response"]
+            );
+            setStudentResponse(res.data[res.data.length - 1]["response"]);
           },
           (error) => {
             return <Redirect to="/dashboard" />;
@@ -324,7 +349,7 @@ const ReviewTest = () => {
     setComponents(_components);
   };
 
-  if (pageLoading)
+  if (pageLoading) {
     return (
       <div className="hardCenter">
         <Icon
@@ -334,8 +359,7 @@ const ReviewTest = () => {
         />
       </div>
     );
-
-  console.log(studentResponse);
+  }
 
   return (
     <>
@@ -374,24 +398,6 @@ const ReviewTest = () => {
                     </p>
                   </Row>
                 </Col>
-                {/* <Col className="mt-3">
-                  <Row>
-                    <Duration
-                      md="5"
-                      label="Hours"
-                      type="text"
-                      disabled={true}
-                      value={testData.data.duration.hours}
-                    />
-                    <Duration
-                      label="Minutes"
-                      md="5"
-                      type="text"
-                      disabled={true}
-                      value={testData.data.duration.minutes}
-                    />
-                  </Row>
-                </Col> */}
               </Row>
               <hr />
 
@@ -411,22 +417,23 @@ const ReviewTest = () => {
                   {section.components.map((question, questionIndex) => (
                     <div key={questionIndex}>
                       <div className="mt-3 mb-4">
-                        <RenderQuestion
-                          question_details={question}
-                          index={questionIndex + 1}
-                          sectionIndex={sectionIndex + 1}
-                          response={studentResponse}
-                          marking={marking}
-                          onReviewChange={changeReview}
-                          onScoreChange={changeScore}
-                        />
-                        <TestQuestionReview
+                        {RenderQuestion({
+                          sectionIndex: sectionIndex,
+                          question_details: question,
+                          index: questionIndex,
+                          response: studentResponse,
+                          marking: marking,
+                          onReviewChange: changeReview,
+                          onScoreChange: changeScore,
+                        })}
+
+                        {/* <TestQuestionReview
                           questionData={question}
                           questionIndex={questionIndex}
                           updateQuestion={(data) =>
                             updateQuestion(sectionIndex, questionIndex, data)
                           }
-                        />
+                        /> */}
                       </div>
                       <hr />
                     </div>

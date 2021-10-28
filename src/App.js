@@ -14,6 +14,8 @@ import Test from "./pages/Test";
 import Sidebar from "./components/common/Sidebar";
 import CreateTest from "./components/tests/CreateTest";
 import PreviewTest from "./components/tests/PreviewTest";
+import AssignCourses from "./pages/admin/AssignCourses";
+import Courses from "./pages/teacher/Courses";
 // import { ToastContainer, toast } from "react-toast";
 
 import Authentication from "./components/common/Authentication";
@@ -76,7 +78,7 @@ const App = () => {
             />
             <Authentication
               exact
-              path="/tests/review/:id/"
+              path="/tests/review/:id/:studentemail"
               component={ReviewTest}
             />
             <Authentication
@@ -89,8 +91,14 @@ const App = () => {
               path="/tests/delete/:id"
               component={DeleteTest}
             />
+            <Authentication exact path="/register" component={Register} />
+            <Authentication
+              exact
+              path="/assigncourses"
+              component={AssignCourses}
+            />
+            <Authentication exact path="/courses" component={Courses} />
             <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
           </Switch>
         </div>
       </div>

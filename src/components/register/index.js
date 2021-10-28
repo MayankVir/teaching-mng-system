@@ -65,7 +65,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const { message } = useSelector((state) => state.message);
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  // const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const onChangeForm = (e) => {
@@ -103,12 +103,12 @@ const Register = () => {
     }
   };
 
-  if (isLoggedIn) {
-    return <Redirect to="/dashboard" />;
-  }
+  // if (isLoggedIn) {
+  //   return <Redirect to="/dashboard" />;
+  // }
 
   return (
-    <div className="col-12 col-lg-6 d-flex align-items-center justify-content-center">
+    <div className="w-80 d-flex align-items-center justify-content-center">
       <div className="register-input-div">
         <h2 className="register-heading">Register New User</h2>
         <Form onSubmit={handleRegister} ref={form} className="register-form">

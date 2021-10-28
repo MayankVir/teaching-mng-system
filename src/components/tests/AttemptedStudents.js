@@ -65,6 +65,7 @@ const AtttemptedStudents = () => {
           </tr>
         </thead>
         <tbody>
+          {console.log(studentList)}
           {studentList.map((student, studentIndex) => (
             <tr key={studentIndex}>
               <td>{studentIndex + 1}</td>
@@ -77,7 +78,9 @@ const AtttemptedStudents = () => {
                     size={1}
                     className="ml-2 hoverPointer"
                     title="See Responses"
-                    onClick={() => history.push(`/tests/review/${student._id}`)}
+                    onClick={() =>
+                      history.push(`/tests/review/${testId}/${student.email}`)
+                    }
                   />
                 ) : (
                   <div> No Response yet</div>

@@ -34,7 +34,7 @@ const TestQuestionEditor = ({
 
   const history = useHistory();
   const [rSelected, setRSelected] = useState(null);
-  const [optionChecked, setOptionchecked] = useState([]);
+  const [allOptions, setAlloptions] = useState([]);
   // const [isChecked, setIschecked] = useState(false);
 
   const changeQuestion = (event) => {
@@ -91,7 +91,13 @@ const TestQuestionEditor = ({
     });
   };
 
-  const addOption = () => {
+  const addOption = (event) => {
+    // console.log(allOptions);
+    // // const key = event.target.name;
+    // let newOptions = allOptions;
+    // newOptions = [...newOptions, false];
+    // setAlloptions(newOptions);
+    // console.log(allOptions);
     updateQuestion({
       ...questionData,
       options: options ? [...options, { name: "" }] : [{ name: "" }],
@@ -116,6 +122,11 @@ const TestQuestionEditor = ({
 
   const deleteOption = (toDel) => {
     let bOptions = [...options];
+    let newOptions = allOptions;
+    // console.log(allOptions);
+    newOptions.splice(toDel, 1);
+    setAlloptions(newOptions);
+    // console.log(allOptions);
     bOptions.splice(toDel, 1);
     updateQuestion({
       ...questionData,
@@ -123,30 +134,29 @@ const TestQuestionEditor = ({
     });
   };
 
-  // const handleCheckChange = (index) => {
-
-  // if (!optionChecked.includes(index)) {
-  //   setIschecked(true);
-  // }
-  // else {
-  //   setIschecked(false);
-  // }
-  // };
+  const handleCheckChange = (index) => {
+    // if (!optionChecked.includes(index)) {
+    //   setIschecked(true);
+    // }
+    // else {
+    //   setIschecked(false);
+    // }
+  };
 
   const answerSaved = (index) => {
-    const _optionChecked = optionChecked;
-    if (!_optionChecked.includes(index)) {
-      _optionChecked.push(index);
-    } else {
-      _optionChecked.splice(_optionChecked.indexOf(index), 1);
-    }
-    // console.log(_optionChecked);
-    setOptionchecked(_optionChecked);
-    updateQuestion({
-      ...questionData,
-      ans_mcq: optionChecked,
-    });
-    console.log(ans_mcq);
+    //   const _optionChecked = optionChecked;
+    //   if (!_optionChecked.includes(index)) {
+    //     _optionChecked.push(index);
+    //   } else {
+    //     _optionChecked.splice(_optionChecked.indexOf(index), 1);
+    //   }
+    //   // console.log(_optionChecked);
+    //   setOptionchecked(_optionChecked);
+    //   updateQuestion({
+    //     ...questionData,
+    //     ans_mcq: optionChecked,
+    //   });
+    //   console.log(ans_mcq);
   };
 
   const renderOptions = () => {
@@ -165,10 +175,10 @@ const TestQuestionEditor = ({
                   <input
                     type={rSelected === 1 ? "radio" : "checkbox"}
                     style={{ marginLeft: "10px" }}
-                    name="options"
+                    name={`option${index}`}
                     className="border-primary"
-                    checked={optionChecked.includes(index)}
-                    onChange={() => answerSaved(index)}
+                    // checked={optionChecked.includes(index)}
+                    // onChange={() => answerSaved(index)}
                   />
                 </Col>
                 <Col>
@@ -198,6 +208,7 @@ const TestQuestionEditor = ({
             ))}
           <div className="small my-1">
             <Button
+              // name={optionChecked.length}
               onClick={addOption}
               outline
               color="red"

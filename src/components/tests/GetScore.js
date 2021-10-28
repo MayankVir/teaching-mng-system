@@ -186,7 +186,7 @@ const RenderQuestion = ({
                 </div>
                 <Input
                   type="file"
-                  value={response[sectionIndex][index]}
+                  // value={response[sectionIndex][index]}
                   accept={acceptFileType[ansFileType]}
                 />
               </>
@@ -375,7 +375,7 @@ const TestResponse = () => {
   console.log(studentResponse);
   console.log(marking);
   return (
-    <Container fluid style={{ padding: "15px 30px" }}>
+    <Container fluid>
       <Row>
         <Col className="ml-3" md="9">
           <Row>

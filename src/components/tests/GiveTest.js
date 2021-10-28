@@ -39,6 +39,7 @@ const RenderQuestion = ({
   response,
   onResponseChange,
   onFilesChange,
+  UploadToServer,
 }) => {
   // var type = question_details["type"];
   // var question = question_details["question"];
@@ -169,7 +170,8 @@ const RenderQuestion = ({
             video={ansFileType === "Video"}
             audio={ansFileType === "Audio"}
             onStop={(blobUrl, blob) => {
-              console.log("Upload", blobUrl, blob);
+              // console.log("Upload", blobUrl, blob);
+              UploadToServer(identifier, blobUrl, blob);
               // onFilesChange(identifier, blob);
             }}
             render={({
@@ -263,23 +265,19 @@ const RenderQuestion = ({
 const TestGive = () => {
   const [response, setResponse] = useState({});
   const changeResponse = (e) => {
-    console.log("Before Changing Response: ", response);
-    // console.log(e.target.files);
-    console.log(e);
     var l = e.target.name.split(",");
     l[0].toString();
     if (typeof l[1] != "undefined") l[1].toString();
     if (typeof response[l[0]] === "undefined") {
       response[l[0]] = {};
     }
-    setResponse(response, (response[l[0]][l[1]] = e.target.value));
-    console.log("After Changing Response: ", response);
+    const tempRes = JSON.parse(JSON.stringify(response));
+    tempRes[l[0]][l[1]] = e.target.value;
+    setResponse(tempRes);
   };
 
   const changeFiles = (event) => {
-    console.log("Before Changing File: ", response);
     var file = event.target.files[0];
-    console.log(file);
     var answerObj;
     var l = event.target.name.split(",");
     l[0].toString();
@@ -287,21 +285,38 @@ const TestGive = () => {
     if (typeof response[l[0]] === "undefined") {
       response[l[0]] = {};
     }
-    console.log(l);
     uploadService.uploadFile(file, testId).then(
-      async (res) => {
+      (res) => {
         answerObj = { ...res.data, name: file.name };
-        console.log(res);
-        await setResponse(response, (response[l[0]][l[1]] = answerObj));
+        const tempRes = JSON.parse(JSON.stringify(response));
+        tempRes[l[0]][l[1]] = answerObj;
+        setResponse(tempRes);
       },
       (error) => {
         console.log(error);
       }
     );
-    // if (response[l[0]] === undefined) {
-    //   response[l[0]] = {};
-    // }
-    console.log("After Changing File: ", response);
+  };
+
+  const UploadToServer = (event, blobUrl, blob) => {
+    var l = event.split(",");
+    var answerObj;
+    l[0].toString();
+    if (typeof l[1] != "undefined") l[1].toString();
+    if (typeof response[l[0]] === "undefined") {
+      response[l[0]] = {};
+    }
+    uploadService.uploadFile(blob, testId).then(
+      (res) => {
+        answerObj = { ...res.data };
+        const tempRes = JSON.parse(JSON.stringify(response));
+        tempRes[l[0]][l[1]] = answerObj;
+        setResponse(tempRes);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   };
   const [components, setComponents] = useState([
     {
@@ -367,8 +382,7 @@ const TestGive = () => {
 
   const submitTest = (e) => {
     e.preventDefault();
-    console.log("HII");
-    console.log(response);
+    console.log("Total Response: ", response);
     TestService.putUserResponse(testId, response)
       .then(() => {
         toast.success("Test Submitted Successfully");
@@ -378,9 +392,7 @@ const TestGive = () => {
   };
 
   const isAdmin = () => {
-    // var admin = window.localStorage["user"];
     var admin = JSON.parse(window.localStorage["user"].toString());
-    console.log(admin.name);
 
     if (admin["type"] === "A") {
       return true;
@@ -510,6 +522,7 @@ const TestGive = () => {
                           response: response,
                           onResponseChange: changeResponse,
                           onFilesChange: changeFiles,
+                          UploadToServer: UploadToServer,
                         })}
                   </div>
                   <hr />

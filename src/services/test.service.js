@@ -10,7 +10,9 @@ const getAllTests = () => {
 };
 
 const getOneTest = (id) => {
-  return axios.get(BASE_URL + "api/quiz/" + id, { headers: authHeader() });
+  return axios.get(BASE_URL + "api/quiz/" + id, {
+    headers: authHeader(),
+  });
 };
 
 const createOneTest = () => {

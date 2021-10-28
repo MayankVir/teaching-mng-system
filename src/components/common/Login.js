@@ -88,7 +88,7 @@ const Login = (props) => {
             <h2 className="login-heading">Login To Continue!</h2>
             <Form onSubmit={handleLogin} ref={form} className="login-form">
               <div className="login-form-email">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email"> </label>
                 <Input
                   type="email"
                   className="login-form-emailInput"

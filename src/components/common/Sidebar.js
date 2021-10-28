@@ -1,5 +1,10 @@
 import React from "react";
-import { mdiMonitorDashboard, mdiNotebookEdit } from "@mdi/js";
+import {
+  mdiMonitorDashboard,
+  mdiNotebookEdit,
+  mdiAccountPlus,
+  mdiBookCheck,
+} from "@mdi/js";
 import Icon from "@mdi/react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -12,21 +17,44 @@ const Sidebar = ({ user }) => {
   const sideNavLinks = [
     {
       to: "/dashboard",
+      value: "dashboard",
       icon: mdiMonitorDashboard,
       text: "Dashboard",
       showLink: ["S", "T", "A"],
     },
     {
       to: "/tests",
+      value: "tests",
       icon: mdiNotebookEdit,
       text: "Tests",
       showLink: ["S", "T", "A"],
     },
+    {
+      to: "/register",
+      value: "register",
+      icon: mdiAccountPlus,
+      text: "Register Teacher",
+      showLink: ["A"],
+    },
+    {
+      to: "/assigncourses",
+      value: "assigncourses",
+      icon: mdiBookCheck,
+      text: "Assign Courses",
+      showLink: ["A"],
+    },
+    {
+      to: "/courses",
+      value: "courses",
+      icon: mdiBookCheck,
+      text: "Courses",
+      showLink: ["T"],
+    },
   ];
 
   const activeIndex = sideNavLinks
-    .map(({ text }) => {
-      return text.toLowerCase();
+    .map(({ value }) => {
+      return value.toLowerCase();
     })
     .indexOf(location.pathname.split("/")[1]);
 
