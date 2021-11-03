@@ -66,20 +66,20 @@ const AtttemptedStudents = () => {
         </thead>
         <tbody>
           {console.log(studentList)}
-          {studentList.map((student, studentIndex) => (
+          {studentList.map((response, studentIndex) => (
             <tr key={studentIndex}>
               <td>{studentIndex + 1}</td>
-              <td>{student.email}</td>
-              <td>{student.email}</td>
+              <td>{response.email}</td>
+              <td>{response.email}</td>
               <td>
-                {student.response ? (
+                {response.response ? (
                   <Icon
                     path={mdiArrowTopRight}
                     size={1}
                     className="ml-2 hoverPointer"
                     title="See Responses"
                     onClick={() =>
-                      history.push(`/tests/review/${testId}/${student.email}`)
+                      history.push(`/tests/review/${response._id}`)
                     }
                   />
                 ) : (

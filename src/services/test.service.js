@@ -52,6 +52,16 @@ const getOneResponse = (email) => {
   });
 };
 
+const loadStudentResponse = (id) => {
+  return axios.get(BASE_URL + `api/quizassign/${id}`, {
+    headers: authHeader(),
+  });
+};
+
+const getOneCourse = (id) => {
+  return new Promise();
+};
+
 const putUserResponse = (id, response) => {
   return axios.put(
     BASE_URL + `api/quizassign/updateresponse?quiz=${id}`,
@@ -72,4 +82,5 @@ export default {
   getAssignedUsers,
   getOneResponse,
   putUserResponse,
+  loadStudentResponse,
 };

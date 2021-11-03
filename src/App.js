@@ -78,7 +78,7 @@ const App = () => {
             />
             <Authentication
               exact
-              path="/tests/review/:id/:studentemail"
+              path="/tests/review/:id"
               component={ReviewTest}
             />
             <Authentication

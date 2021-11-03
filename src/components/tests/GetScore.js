@@ -15,279 +15,272 @@ import { easeLinear } from "d3-ease";
 import AnimatedProgressProvider from "./TestResponseAnimations/AnimatedProgressProvider";
 import ChangingProgressProvider from "./TestResponseAnimations/ChangingProgressProvider";
 import { Media, Player, controls } from "react-media-player";
+import RenderQuestion from "./RenderQuestion";
 const { PlayPause, MuteUnmute } = controls;
-const RenderQuestion = ({
-  question_details,
-  index,
-  sectionIndex,
-  response,
-  marking,
-}) => {
-  var acceptFileType = {
-    Any: "",
-    Image: "image/*",
-    Video: "video/*",
-    Audio: "audio/*",
-    PDFs: ".pdf",
-    DOCs: ".doc, .docx",
-  };
-  var type = question_details["type"];
-  var question = question_details["question"];
-  var options = question_details["options"];
-  var isRequired = question_details["isRequired"];
-  var questionFiles = question_details["questionFiles"];
-  var ansFileType = question_details["ansFileType"];
-  var identifier = sectionIndex + "," + index;
-  // var identifier = sectionIndex + "," + index;
-  var questionBox = null;
-  if (response !== undefined) {
-    if (response[sectionIndex] !== undefined) {
-      if (response[sectionIndex][index] !== undefined) {
-        acceptFileType = {
-          Any: "",
-          Image: "image/*",
-          Video: "video/*",
-          Audio: "audio/*",
-          PDFs: ".pdf",
-          DOCs: ".doc, .docx",
-        };
-        type = question_details["type"];
-        question = question_details["question"];
-        options = question_details["options"];
-        isRequired = question_details["isRequired"];
-        questionFiles = question_details["questionFiles"];
-        ansFileType = question_details["ansFileType"];
-        identifier = sectionIndex + "," + index;
-        // identifier = sectionIndex + "," + index;
-        questionBox = null;
-        let questionFilesBox = questionFiles ? (
-          questionFiles.map((fileData, index) => {
-            switch (fileData.name.split(".").pop()) {
-              case "jpg":
-                return (
-                  <div className="col-6" key={index}>
-                    <img
-                      className="mb-3"
-                      style={{ maxWidth: "100%" }}
-                      src={fileData.url}
-                      alt={fileData.name}
-                    />
-                  </div>
-                );
-              case "png":
-                return (
-                  <div className="col-6" key={index}>
-                    <img
-                      className="mb-3"
-                      style={{ maxWidth: "100%" }}
-                      src={fileData.url}
-                      alt={fileData.name}
-                    />
-                  </div>
-                );
-              case "mp4":
-                return (
-                  <div className="col-6" key={index}>
-                    <video
-                      controls
-                      className="mb-3"
-                      style={{ maxWidth: "100%" }}
-                    >
-                      <source src={fileData.url} />
-                    </video>
-                  </div>
-                );
-              case "mp3":
-                return (
-                  <div className="col-6" key={index}>
-                    {" "}
-                    <audio controls className="mb-3" style={{ width: "100%" }}>
-                      <source src={fileData.url} />
-                    </audio>
-                  </div>
-                );
-              default:
-                return <span key={index}></span>;
-            }
-          })
-        ) : (
-          <></>
-        );
+// const RenderQuestion = ({
+//   question_details,
+//   index,
+//   sectionIndex,
+//   response,
+//   marking,
+// }) => {
+//   var acceptFileType = {
+//     Any: "",
+//     Image: "image/*",
+//     Video: "video/*",
+//     Audio: "audio/*",
+//     PDFs: ".pdf",
+//     DOCs: ".doc, .docx",
+//   };
+//   var type = question_details["type"];
+//   var question = question_details["question"];
+//   var options = question_details["options"];
+//   var isRequired = question_details["isRequired"];
+//   var questionFiles = question_details["questionFiles"];
+//   var ansFileType = question_details["ansFileType"];
+//   var identifier = sectionIndex + "," + index;
+//   // var identifier = sectionIndex + "," + index;
+//   var questionBox = null;
+//   if (response !== undefined) {
+//     if (response[sectionIndex] !== undefined) {
+//       if (response[sectionIndex][index] !== undefined) {
+//         acceptFileType = {
+//           Any: "",
+//           Image: "image/*",
+//           Video: "video/*",
+//           Audio: "audio/*",
+//           PDFs: ".pdf",
+//           DOCs: ".doc, .docx",
+//         };
+//         questionBox = null;
+//         let questionFilesBox = questionFiles ? (
+//           questionFiles.map((fileData, index) => {
+//             switch (fileData.name.split(".").pop()) {
+//               case "jpg":
+//                 return (
+//                   <div className="col-6" key={index}>
+//                     <img
+//                       className="mb-3"
+//                       style={{ maxWidth: "100%" }}
+//                       src={fileData.url}
+//                       alt={fileData.name}
+//                     />
+//                   </div>
+//                 );
+//               case "png":
+//                 return (
+//                   <div className="col-6" key={index}>
+//                     <img
+//                       className="mb-3"
+//                       style={{ maxWidth: "100%" }}
+//                       src={fileData.url}
+//                       alt={fileData.name}
+//                     />
+//                   </div>
+//                 );
+//               case "mp4":
+//                 return (
+//                   <div className="col-6" key={index}>
+//                     <video
+//                       controls
+//                       className="mb-3"
+//                       style={{ maxWidth: "100%" }}
+//                     >
+//                       <source src={fileData.url} />
+//                     </video>
+//                   </div>
+//                 );
+//               case "mp3":
+//                 return (
+//                   <div className="col-6" key={index}>
+//                     {" "}
+//                     <audio controls className="mb-3" style={{ width: "100%" }}>
+//                       <source src={fileData.url} />
+//                     </audio>
+//                   </div>
+//                 );
+//               default:
+//                 return <span key={index}></span>;
+//             }
+//           })
+//         ) : (
+//           <></>
+//         );
 
-        switch (type) {
-          case "descriptive":
-            questionBox = (
-              <>
-                <p className="text-muted mb-1 small">
-                  Short answer type question.
-                </p>
-                <div className="row justify-content-center d-flex">
-                  {questionFilesBox}
-                </div>
-                <p className="form-control">{response[sectionIndex][index]}</p>
-              </>
-            );
-            break;
-          // case "long_ans":
-          //   questionBox = (
-          //     <>
-          //       <p className="text-muted mb-1 small">
-          //         Long answer type question.
-          //       </p>
-          //       <div className="row justify-content-center d-flex">
-          //         {questionFilesBox}
-          //       </div>
-          //       <p className="form-control">{response[sectionIndex][index]}</p>
-          //     </>
-          //   );
-          //   break;
-          case "checkbox":
-            questionBox = (
-              <>
-                <p className="text-muted mb-1 small">
-                  Pick the correct option.
-                </p>
-                <div className="row justify-content-center d-flex">
-                  {questionFilesBox}
-                </div>
-                <div>Selected : {response[sectionIndex][index]}</div>
-              </>
-            );
-            break;
-          case "record":
-            questionBox = (
-              <>
-                <div className="row justify-content-center d-flex">
-                  {questionFilesBox}
-                </div>
+//         switch (type) {
+//           case "descriptive":
+//             questionBox = (
+//               <>
+//                 <p className="text-muted mb-1 small">
+//                   Short answer type question.
+//                 </p>
+//                 <div className="row justify-content-center d-flex">
+//                   {questionFilesBox}
+//                 </div>
+//                 <p className="form-control">{response[sectionIndex][index]}</p>
+//               </>
+//             );
+//             break;
+//           // case "long_ans":
+//           //   questionBox = (
+//           //     <>
+//           //       <p className="text-muted mb-1 small">
+//           //         Long answer type question.
+//           //       </p>
+//           //       <div className="row justify-content-center d-flex">
+//           //         {questionFilesBox}
+//           //       </div>
+//           //       <p className="form-control">{response[sectionIndex][index]}</p>
+//           //     </>
+//           //   );
+//           //   break;
+//           case "checkbox":
+//             questionBox = (
+//               <>
+//                 <p className="text-muted mb-1 small">
+//                   Pick the correct option.
+//                 </p>
+//                 <div className="row justify-content-center d-flex">
+//                   {questionFilesBox}
+//                 </div>
+//                 <div>Selected : {response[sectionIndex][index]}</div>
+//               </>
+//             );
+//             break;
+//           case "record":
+//             questionBox = (
+//               <>
+//                 <div className="row justify-content-center d-flex">
+//                   {questionFilesBox}
+//                 </div>
 
-                <Media>
-                  <div className="media">
-                    <div className="media-player">
-                      <Player src={response[sectionIndex][index]} />
-                    </div>
-                    <div className="media-controls">
-                      <PlayPause />
-                      <MuteUnmute />
-                    </div>
-                  </div>
-                </Media>
-              </>
-            );
-            break;
-          case "file":
-            questionBox = (
-              <>
-                <p className="text-muted mb-1 small">
-                  Upload the required file type. Allowed: {ansFileType}
-                </p>
-                <div className="row justify-content-center d-flex">
-                  {questionFilesBox}
-                </div>
-                <Input
-                  type="file"
-                  // value={response[sectionIndex][index]}
-                  accept={acceptFileType[ansFileType]}
-                />
-              </>
-            );
-            break;
-          default:
-            questionBox = <></>;
-        }
-        return (
-          <>
-            <h5 className="mb-0">
-              <b>Question {index}.</b> {question}
-              {isRequired && <span className="text-danger ml-1">*</span>}
-            </h5>
-            {questionBox}
-          </>
-        );
-      }
-    }
-  }
-  var res = <></>;
-  if (marking != undefined) {
-    if (marking[sectionIndex] != undefined) {
-      if (marking[sectionIndex][index] != undefined) {
-        res = (
-          <>
-            <AnimatedProgressProvider
-              valueStart={0}
-              valueEnd={marking[sectionIndex][index]["score"]}
-              duration={3}
-              easingFunction={easeLinear}
-              repeat
-            >
-              {(value) => {
-                const roundedValue = Math.round(value);
-                return (
-                  <div className="row">
-                    <div className="col-6">
-                      <div style={{ width: 150, height: 150 }}>
-                        <ChangingProgressProvider
-                          values={[marking[sectionIndex][index]["score"]]}
-                        >
-                          {(percentage) => (
-                            <CircularProgressbar
-                              value={percentage}
-                              text={`${percentage}%`}
-                              styles={buildStyles({
-                                pathTransitionDuration: 0.15,
-                              })}
-                            />
-                          )}
-                        </ChangingProgressProvider>
-                      </div>
-                    </div>
-                    <div className="col-6">
-                      <div className="card">
-                        <div className="card-header">Review</div>
-                        <div class="card-body">
-                          <blockquote class="blockquote mb-0">
-                            <p
-                              style={{
-                                fontSize: "15px",
-                                overflowY: "scroll",
-                                height: "50px",
-                              }}
-                            >
-                              {marking[sectionIndex][index]["review"]}
-                            </p>
-                            <footer class="blockquote-footer">
-                              Dr. Athe{" "}
-                              <cite title="Source Title">
-                                (Associate Proffessor))
-                              </cite>
-                            </footer>
-                          </blockquote>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }}
-            </AnimatedProgressProvider>
-          </>
-        );
-      }
-    }
-  }
-  return (
-    <>
-      <h5 className="mb-0">
-        <b>Question {index}.</b> {question}
-        {isRequired && <span className="text-danger ml-1">*</span>}
-      </h5>
-      {questionBox}
-      <br />
-      {res}
-    </>
-  );
-};
+//                 <Media>
+//                   <div className="media">
+//                     <div className="media-player">
+//                       <Player src={response[sectionIndex][index]} />
+//                     </div>
+//                     <div className="media-controls">
+//                       <PlayPause />
+//                       <MuteUnmute />
+//                     </div>
+//                   </div>
+//                 </Media>
+//               </>
+//             );
+//             break;
+//           case "file":
+//             questionBox = (
+//               <>
+//                 <p className="text-muted mb-1 small">
+//                   Upload the required file type. Allowed: {ansFileType}
+//                 </p>
+//                 <div className="row justify-content-center d-flex">
+//                   {questionFilesBox}
+//                 </div>
+//                 <Input
+//                   type="file"
+//                   // value={response[sectionIndex][index]}
+//                   accept={acceptFileType[ansFileType]}
+//                 />
+//               </>
+//             );
+//             break;
+//           default:
+//             questionBox = <></>;
+//         }
+//         return (
+//           <>
+//             <h5 className="mb-0">
+//               <b>Question {index}.</b> {question}
+//               {isRequired && <span className="text-danger ml-1">*</span>}
+//             </h5>
+//             {questionBox}
+//           </>
+//         );
+//       }
+//     }
+//   }
+//   var res = <></>;
+//   if (marking != undefined) {
+//     if (marking[sectionIndex] != undefined) {
+//       if (marking[sectionIndex][index] != undefined) {
+//         res = (
+//           <>
+//             <AnimatedProgressProvider
+//               valueStart={0}
+//               valueEnd={marking[sectionIndex][index]["score"]}
+//               duration={3}
+//               easingFunction={easeLinear}
+//               repeat
+//             >
+//               {(value) => {
+//                 const roundedValue = Math.round(value);
+//                 return (
+//                   <div className="row">
+//                     <div className="col-6">
+//                       <div style={{ width: 150, height: 150 }}>
+//                         <ChangingProgressProvider
+//                           values={[marking[sectionIndex][index]["score"]]}
+//                         >
+//                           {(percentage) => (
+//                             <CircularProgressbar
+//                               value={percentage}
+//                               text={`${percentage}%`}
+//                               styles={buildStyles({
+//                                 pathTransitionDuration: 0.15,
+//                               })}
+//                             />
+//                           )}
+//                         </ChangingProgressProvider>
+//                       </div>
+//                     </div>
+//                     <div className="col-6">
+//                       <div className="card">
+//                         <div className="card-header">Review</div>
+//                         <div class="card-body">
+//                           <blockquote class="blockquote mb-0">
+//                             <p
+//                               style={{
+//                                 fontSize: "15px",
+//                                 overflowY: "scroll",
+//                                 height: "50px",
+//                               }}
+//                             >
+//                               {marking[sectionIndex][index]["review"]}
+//                             </p>
+//                             <footer class="blockquote-footer">
+//                               Dr. Athe{" "}
+//                               <cite title="Source Title">
+//                                 (Associate Proffessor))
+//                               </cite>
+//                             </footer>
+//                           </blockquote>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 );
+//               }}
+//             </AnimatedProgressProvider>
+//           </>
+//         );
+//       }
+//     }
+//   }
+//   return (
+//     <>
+//       <h5 className="mb-0">
+//         <b>Question {index}.</b> {question}
+//         {isRequired && <span className="text-danger ml-1">*</span>}
+//       </h5>
+//       {questionBox}
+//       <br />
+//       {res}
+//     </>
+//   );
+// };
 
-const TestResponse = () => {
+const GetScore = () => {
   const [components, setComponents] = useState([
     {
       title: "",
@@ -323,7 +316,7 @@ const TestResponse = () => {
   useEffect(() => {
     setPageLoading(true);
     TestService.getOneTest(testId).then(
-      (response) => {
+      async (response) => {
         setTestData({
           title: response.data.title ? response.data.title : "",
           data: {
@@ -338,7 +331,7 @@ const TestResponse = () => {
         var decoded = jwt_decode(student["token"]);
         // console.log(decoded);
         console.log(decoded["email"]);
-        TestService.getOneResponse(decoded["email"]).then(
+        await TestService.getOneResponse(decoded["email"]).then(
           (res) => {
             console.log(res);
             setStudentResponse(res.data[0]["response"]);
@@ -372,8 +365,6 @@ const TestResponse = () => {
       </div>
     );
 
-  console.log(studentResponse);
-  console.log(marking);
   return (
     <Container fluid>
       <Row>
@@ -423,12 +414,18 @@ const TestResponse = () => {
           {section.components.map((question, questionIndex) => (
             <div key={questionIndex}>
               <div className="mt-3 mb-4">
+                {console.log(
+                  `Response S${sectionIndex + 1} Q${questionIndex + 1}`,
+                  studentResponse
+                )}
+                {console.log(marking)}
                 <RenderQuestion
                   question_details={question}
                   index={questionIndex + 1}
                   sectionIndex={sectionIndex + 1}
                   response={studentResponse}
                   marking={marking}
+                  UserType="S"
                 />
               </div>
               <hr />
@@ -445,4 +442,4 @@ const TestResponse = () => {
   );
 };
 
-export default TestResponse;
+export default GetScore;
