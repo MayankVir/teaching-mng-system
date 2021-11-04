@@ -15,7 +15,7 @@ import { easeLinear } from "d3-ease";
 import AnimatedProgressProvider from "./TestResponseAnimations/AnimatedProgressProvider";
 import ChangingProgressProvider from "./TestResponseAnimations/ChangingProgressProvider";
 import { Media, Player, controls } from "react-media-player";
-import RenderQuestion from "./RenderQuestion";
+import RenderQuestion from "./extras/RenderQuestion";
 const { PlayPause, MuteUnmute } = controls;
 // const RenderQuestion = ({
 //   question_details,

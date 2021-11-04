@@ -22,7 +22,7 @@ import { Redirect, useHistory } from "react-router-dom";
 // import { ReactMediaRecorder } from "react-media-recorder";
 import { Media, Player, controls } from "react-media-player";
 import TestService from "../../services/test.service";
-import RenderQuestion from "./RenderQuestion";
+import RenderQuestion from "./extras/RenderQuestion";
 const { PlayPause, MuteUnmute } = controls;
 var mime = require("mime-types");
 

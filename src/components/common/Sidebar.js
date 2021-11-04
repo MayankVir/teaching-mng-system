@@ -4,12 +4,15 @@ import {
   mdiNotebookEdit,
   mdiAccountPlus,
   mdiBookCheck,
+  mdiBookPlus,
+  mdiBookMultiple,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "../common/Common.css";
+import { Scrollbars } from "react-custom-scrollbars";
 
 const Sidebar = ({ user }) => {
   const location = useLocation();
@@ -50,6 +53,20 @@ const Sidebar = ({ user }) => {
       text: "Courses",
       showLink: ["T"],
     },
+    {
+      to: "/createcourse",
+      value: "createcourse",
+      icon: mdiBookPlus,
+      text: "Create Course",
+      showLink: ["A"],
+    },
+    {
+      to: "/allcourses",
+      value: "allcourses",
+      icon: mdiBookMultiple,
+      text: "All Courses",
+      showLink: ["A"],
+    },
   ];
 
   const activeIndex = sideNavLinks
@@ -59,29 +76,35 @@ const Sidebar = ({ user }) => {
     .indexOf(location.pathname.split("/")[1]);
 
   return (
-    <nav id="sidebar" className={`bg-white ${sideBarOpened ? "show" : ""}`}>
-      <ul className="list-unstyled" id="sidenav">
-        {sideNavLinks.map((item, index) =>
-          item.showLink.includes(user.type) ? (
-            <li
-              key={index}
-              className={`sideTab ${activeIndex === index ? "active" : ""}`}
-            >
-              <Link to={item.to} className="text-decoration-none d-flex">
-                <Icon
-                  size={1}
-                  path={item.icon}
-                  style={{ marginRight: "5px" }}
-                  className="mr-2"
-                />{" "}
-                {item.text}
-              </Link>
-            </li>
-          ) : (
-            <span key={index}></span>
-          )
-        )}
-      </ul>
+    <nav
+      id="sidebar"
+      className={`bg-white ${sideBarOpened ? "show" : ""}`}
+      // style={{ overflow: "auto" }}
+    >
+      <Scrollbars style={{ width: 500, height: 600 }}>
+        <ul className="list-unstyled" id="sidenav">
+          {sideNavLinks.map((item, index) =>
+            item.showLink.includes(user.type) ? (
+              <li
+                key={index}
+                className={`sideTab ${activeIndex === index ? "active" : ""}`}
+              >
+                <Link to={item.to} className="text-decoration-none d-flex">
+                  <Icon
+                    size={1}
+                    path={item.icon}
+                    style={{ marginRight: "5px" }}
+                    className="mr-2"
+                  />{" "}
+                  {item.text}
+                </Link>
+              </li>
+            ) : (
+              <span key={index}></span>
+            )
+          )}
+        </ul>
+      </Scrollbars>
     </nav>
   );
 };

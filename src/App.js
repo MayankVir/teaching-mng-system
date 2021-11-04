@@ -27,6 +27,7 @@ import AttemptedStudents from "./components/tests/AttemptedStudents";
 import SeeScore from "./components/tests/GetScore";
 import GiveTest from "./components/tests/GiveTest";
 import ReviewTest from "./components/tests/ReviewTest";
+import CreateCourse from "./pages/admin/CreateCourse";
 
 const history = createBrowserHistory();
 const App = () => {
@@ -90,6 +91,16 @@ const App = () => {
               exact
               path="/tests/delete/:id"
               component={DeleteTest}
+            />
+            <Authentication
+              exact
+              path="/createcourse"
+              component={CreateCourse}
+            />
+            <Authentication
+              exact
+              path="/createcourse"
+              component={CreateCourse}
             />
             <Authentication exact path="/register" component={Register} />
             <Authentication

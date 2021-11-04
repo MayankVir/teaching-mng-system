@@ -149,6 +149,7 @@ const CreateTest = (props) => {
       },
     ]);
   };
+
   const addQuestion = (sectionIndex) => {
     const _components = [...components];
     _components[sectionIndex].components = [
@@ -215,6 +216,7 @@ const CreateTest = (props) => {
       },
     }));
   };
+
   const handleDurationEnd = (event) => {
     const end = event._d.getTime();
     setTestData((prevData) => ({
@@ -235,6 +237,7 @@ const CreateTest = (props) => {
       data: { ...prevData.data, assign: emailArray },
     }));
   };
+
   const isAdmin = () => {
     // var admin = window.localStorage["user"];
     var admin = JSON.parse(window.localStorage["user"].toString());
