@@ -15,6 +15,7 @@ html {
 html {
   overflow-x: hidden;
   /* overflow-y: auto; */
+  user-select: none;
 }
 
 .hardCenter {

@@ -1,7 +1,7 @@
 import { mdiLoading } from "@mdi/js";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import TestService from "../../services/test.service";
 import { Redirect, useHistory } from "react-router-dom";
 import Datetime from "react-datetime";
@@ -9,6 +9,7 @@ import "react-datetime/css/react-datetime.css";
 import AddSection from "./extras/AddSection";
 import "../common/Common.css";
 import { ToastContainer, toast } from "react-toast";
+import CourseService from "../../services/course.service";
 // import DatePicker from "react-datepicker";
 // import { DateTime } from "react-datetime-bootstrap";
 // import "react-datepicker/dist/react-datepicker.css";
@@ -25,7 +26,10 @@ const CreateTest = (props) => {
     },
   ]);
   const [saving, setSaving] = useState(false);
+  const [isCourseSelected, setIsCourseSelected] = useState(false);
+  const [CourseList, setCourseList] = useState([]);
   const [testData, setTestData] = useState({
+    course: null,
     title: "",
     data: {
       description: "",
@@ -48,9 +52,12 @@ const CreateTest = (props) => {
 
   useEffect(() => {
     setPageLoading(true);
+    CourseService.getAllCourses().then((res) => setCourseList(res.data));
     TestService.getOneTest(testId).then(
       (response) => {
+        console.log(response.data);
         setTestData({
+          course: response.data.course ? response.data.course : null,
           title: response.data.title ? response.data.title : "",
           data: {
             description: "",
@@ -85,7 +92,7 @@ const CreateTest = (props) => {
     TestService.saveOneTest({ ...testData, components: components }, testId)
       .then((result) => {
         const emails = testData.data.assign;
-        console.log(emails);
+        console.log(result);
         toast.success("Test Created Successfully");
         TestService.assignEmail(emails, testId)
           .then(
@@ -239,20 +246,46 @@ const CreateTest = (props) => {
   };
 
   const isAdmin = () => {
-    // var admin = window.localStorage["user"];
-    var admin = JSON.parse(window.localStorage["user"].toString());
+    var type = JSON.parse(localStorage["type"].toString());
     // console.log(admin.name);
 
-    if (admin["type"] === "A") {
+    if (type === "A") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  const isTeacher = () => {
+    var type = JSON.parse(localStorage["type"].toString());
+    // console.log(admin.name);
+
+    if (type === "T") {
       return true;
     } else {
       return false;
     }
   };
 
+  const handleCourseSelected = (e) => {
+    if (e.target.value === "default") {
+      setIsCourseSelected(false);
+      setTestData({
+        ...testData,
+        course: null,
+      });
+    } else {
+      setIsCourseSelected(true);
+      setTestData({
+        ...testData,
+        course: e.target.value,
+      });
+    }
+    console.log(e.target.value);
+  };
+
   return (
     <div>
-      {!isAdmin() ? (
+      {!isAdmin() && !isTeacher() ? (
         <div>You are not Authorised here</div>
       ) : (
         <div className="container-fluid" style={{ padding: "15px 30px" }}>
@@ -290,7 +323,7 @@ const CreateTest = (props) => {
                   />
                 </FormGroup>
                 <FormGroup className="mb-3">
-                  <Label className="mb-0">Test Description</Label>
+                  <Label>Test Description</Label>
                   <Input
                     type="textarea"
                     required
@@ -299,14 +332,14 @@ const CreateTest = (props) => {
                     className="border-primary py-3"
                     placeholder="Test Description"
                   />
-                  <FormGroup>
+                  <FormGroup className="mt-3">
                     <Label>Test Duration</Label>
                     <div
                       className="smallerScreenTest d-flex justify-content-between"
                       style={{ width: "50%" }}
                     >
                       <div>
-                        <Label className="mt-3 mb-0">Start Date & Time</Label>
+                        <Label className=" mb-0">Start Date & Time</Label>
                         <Datetime
                           className="w-30"
                           inputProps={{ placeholder: "Start Date & Time" }}
@@ -315,7 +348,7 @@ const CreateTest = (props) => {
                         />
                       </div>
                       <div>
-                        <Label className="mt-3 mb-0">End Date & Time</Label>
+                        <Label className=" mb-0">End Date & Time</Label>
                         <Datetime
                           className="w-30"
                           inputProps={{ placeholder: "End Date & Time" }}
@@ -328,15 +361,61 @@ const CreateTest = (props) => {
                 </FormGroup>
 
                 <FormGroup>
-                  <Label className="mb-0">Assign Test</Label>
-                  <Input
-                    type="textarea"
-                    required
-                    value={testData.data.assign}
-                    onChange={handleAssign}
-                    className="border-primary py-3"
-                    placeholder="Paste comma separated emails to assign"
-                  />
+                  <Row>
+                    <Col style={{ flex: 1 }}>
+                      <Row style={{ padding: "10px" }}>
+                        <h5 style={{ margin: "5px 0" }}>Select any course</h5>
+                        <select
+                          name="courses"
+                          id="courses"
+                          // style={{ padding: "0 15px" }}
+                          onChange={handleCourseSelected}
+                        >
+                          <option value="default">Select any course</option>
+                          {CourseList.map((course) => {
+                            return (
+                              <option
+                                key={course._id}
+                                value={course._id}
+                                selected={
+                                  testData.course === course._id ? true : false
+                                }
+                              >{`${course.title} (${course.code})`}</option>
+                            );
+                          })}
+
+                          {/* <option value="course2">Course 2</option>
+                          <option value="course3">Course 3</option>
+                          <option value="course4">Course 4</option>
+                          <option value="course5">Course 5</option>
+                          <option value="course6">Course 6</option>
+                          <option value="course7">Course 7</option> */}
+                        </select>
+                      </Row>
+                    </Col>
+                    <Col
+                      style={{
+                        flex: 0,
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {" "}
+                      <h3>OR</h3>
+                    </Col>
+                    <Col>
+                      <Label className="mb-0">Assign Test</Label>
+                      <Input
+                        type="textarea"
+                        required
+                        value={testData.data.assign}
+                        onChange={handleAssign}
+                        className="border-primary py-3"
+                        placeholder="Paste comma se parated emails to assign"
+                        disabled={isCourseSelected}
+                      />
+                    </Col>
+                  </Row>
                 </FormGroup>
 
                 <h3 className="mt-4">Test Structure</h3>

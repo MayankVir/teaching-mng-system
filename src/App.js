@@ -13,8 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import Test from "./pages/Test";
 import Sidebar from "./components/common/Sidebar";
 import CreateTest from "./components/tests/CreateTest";
-import PreviewTest from "./components/tests/PreviewTest";
-import AssignCourses from "./pages/admin/AssignCourses";
+// import PreviewTest from "./components/tests/PreviewTest";
+// import AssignCourses from "./pages/admin/AssignCourses";
 import Courses from "./pages/teacher/Courses";
 // import { ToastContainer, toast } from "react-toast";
 
@@ -28,6 +28,10 @@ import SeeScore from "./components/tests/GetScore";
 import GiveTest from "./components/tests/GiveTest";
 import ReviewTest from "./components/tests/ReviewTest";
 import CreateCourse from "./pages/admin/CreateCourse";
+import AllCourses from "./pages/admin/AllCourses";
+import ViewCourse from "./pages/admin/ViewCourse";
+import DeleteCourse from "./pages/admin/DeleteCourse";
+import VideoMonitor from "./components/tests/VideoMonitor";
 
 const history = createBrowserHistory();
 const App = () => {
@@ -94,20 +98,36 @@ const App = () => {
             />
             <Authentication
               exact
-              path="/createcourse"
-              component={CreateCourse}
+              path="/tests/videomonitor/:id"
+              component={VideoMonitor}
             />
             <Authentication
               exact
               path="/createcourse"
               component={CreateCourse}
             />
-            <Authentication exact path="/register" component={Register} />
+            {/* <Authentication
+              exact
+              path="/createcourse/:id"
+              component={CreateCourse}
+            /> */}
             <Authentication
+              exact
+              path="/allcourses/:id"
+              component={ViewCourse}
+            />
+            <Authentication exact path="/register" component={Register} />
+            {/* <Authentication
               exact
               path="/assigncourses"
               component={AssignCourses}
+            /> */}
+            <Authentication
+              exact
+              path="/allcourses/delete/:id"
+              component={DeleteCourse}
             />
+            <Authentication exact path="/allcourses" component={AllCourses} />
             <Authentication exact path="/courses" component={Courses} />
             <Route exact path="/login" component={Login} />
           </Switch>

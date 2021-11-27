@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import TestService from "../../services/test.service";
 import { Redirect, useHistory } from "react-router-dom";
 import {
@@ -20,10 +20,9 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toast";
 import Countdown from "react-countdown";
-// import Duration from "./extras/Duration";
-import jwt_decode from "jwt-decode";
 import uploadService from "../../services/upload.service";
-
+import Peer from "peerjs";
+import io from "socket.io-client";
 var mime = require("mime-types");
 
 const RenderQuestion = ({
@@ -262,8 +261,34 @@ const RenderQuestion = ({
   );
 };
 
-const TestGive = () => {
+const GiveTest = () => {
+  const socket = io("http://localhost:8000", { secure: true });
+  const userVideo = useRef();
+
   const [response, setResponse] = useState({});
+  const [components, setComponents] = useState([
+    {
+      title: "",
+      data: {
+        description: "",
+      },
+      components: [],
+    },
+  ]);
+
+  const [pageLoading, setPageLoading] = useState(true);
+
+  const [testData, setTestData] = useState({
+    title: "",
+    data: {
+      description: "",
+      duration: {
+        start: 0,
+        end: 0,
+      },
+    },
+  });
+
   const changeResponse = (e) => {
     var l = e.target.name.split(",");
     l[0].toString();
@@ -318,28 +343,6 @@ const TestGive = () => {
       }
     );
   };
-  const [components, setComponents] = useState([
-    {
-      title: "",
-      data: {
-        description: "",
-      },
-      components: [],
-    },
-  ]);
-
-  const [pageLoading, setPageLoading] = useState(true);
-
-  const [testData, setTestData] = useState({
-    title: "",
-    data: {
-      description: "",
-      duration: {
-        start: 0,
-        end: 0,
-      },
-    },
-  });
 
   let history = useHistory();
 
@@ -367,9 +370,60 @@ const TestGive = () => {
         return <Redirect to="/dashboard" />;
       }
     );
-  }, [testId]);
 
-  if (pageLoading)
+    // New Peer Connection
+    const peer = new Peer(
+      `student_${(Math.floor(Math.random() * 10000) + 1).toString()}`,
+      {
+        host: "localhost",
+        port: 5000,
+        path: "/",
+      }
+    );
+
+    peer.on("open", () => {
+      localStorage.setItem("peerId", peer.id);
+    });
+
+    // Local Video Stream on Page loading
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        userVideo.current.srcObject = stream;
+      })
+      .catch((err) => console.log(err));
+
+    // Teacher calling to student and student calling back with stream
+    socket.on("send-your-peer-call", (peerId) => {
+      console.log("Request from teacher");
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          peer.call(peerId, stream);
+          socket.emit("take-student-id", localStorage.getItem("peerid"));
+        })
+        .catch((err) => console.log(err));
+    });
+
+    // Sending emit to server if teacher is present
+    socket.emit("send-me-to-teacher", (data) => {
+      console.log(data);
+      if (data.check) {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then((stream) => {
+            peer.call(data.peerId, stream);
+            socket.emit("take-student-id", localStorage.getItem("peerid"));
+          })
+          .catch((err) => console.log(err));
+      }
+    });
+  }, []);
+
+  // socket.on("disconnect", () => {
+  //   socket.emit("socket-disconnect", socket.id);
+  // });
+  if (pageLoading) {
     return (
       <div className="hardCenter">
         <Icon
@@ -379,6 +433,7 @@ const TestGive = () => {
         />
       </div>
     );
+  }
 
   const submitTest = (e) => {
     e.preventDefault();
@@ -392,9 +447,10 @@ const TestGive = () => {
   };
 
   const isAdmin = () => {
-    var admin = JSON.parse(window.localStorage["user"].toString());
+    var type = JSON.parse(localStorage["type"].toString());
+    // console.log(admin.name);
 
-    if (admin["type"] === "A") {
+    if (type === "A") {
       return true;
     } else {
       return false;
@@ -489,6 +545,20 @@ const TestGive = () => {
           </Col>
         </Row>
         <hr />
+        <div>
+          <Row>
+            {/* <h1>Current user id is {peerId}</h1> */}
+            <div>
+              <video
+                className="students own video"
+                ref={userVideo}
+                muted
+                autoPlay
+                style={{ width: "300px", height: "150px" }}
+              />
+            </div>
+          </Row>
+        </div>
         <form onSubmit={submitTest}>
           {" "}
           {/* {JSON.stringify(components)} */}
@@ -551,4 +621,4 @@ const TestGive = () => {
   );
 };
 
-export default TestGive;
+export default GiveTest;

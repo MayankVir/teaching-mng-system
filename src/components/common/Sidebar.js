@@ -4,7 +4,6 @@ import {
   mdiNotebookEdit,
   mdiAccountPlus,
   mdiBookCheck,
-  mdiBookPlus,
   mdiBookMultiple,
 } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -39,13 +38,13 @@ const Sidebar = ({ user }) => {
       text: "Register Teacher",
       showLink: ["A"],
     },
-    {
-      to: "/assigncourses",
-      value: "assigncourses",
-      icon: mdiBookCheck,
-      text: "Assign Courses",
-      showLink: ["A"],
-    },
+    // {
+    //   to: "/assigncourses",
+    //   value: "assigncourses",
+    //   icon: mdiBookCheck,
+    //   text: "Assign Courses",
+    //   showLink: ["A"],
+    // },
     {
       to: "/courses",
       value: "courses",
@@ -54,18 +53,11 @@ const Sidebar = ({ user }) => {
       showLink: ["T"],
     },
     {
-      to: "/createcourse",
-      value: "createcourse",
-      icon: mdiBookPlus,
-      text: "Create Course",
-      showLink: ["A"],
-    },
-    {
       to: "/allcourses",
       value: "allcourses",
       icon: mdiBookMultiple,
       text: "All Courses",
-      showLink: ["A"],
+      showLink: ["A", "T"],
     },
   ];
 

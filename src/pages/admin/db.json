@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Software Engineering",
+    "description": "desc1",
+    "code": "100",
+    "students": ["student@student.com", "abc@gmail.com", "qwerty@gmail.com"],
+    "teachers": ["teacher@teacher.com", "teacher@gmail.com"],
+    "tas": ["assistant@gmail.com", "assitant1@gmail.com"]
+  },
+  {
+    "title": "Computer Networks",
+    "description": "desc2",
+    "code": "101",
+    "students": ["student@student.com", "abc@gmail.com", "qwerty@gmail.com"],
+    "teachers": ["teacher@teacher.com", "teacher@gmail.com"],
+    "tas": ["assistant@gmail.com", "assitant1@gmail.com"]
+  },
+  {
+    "title": "Database Management System",
+    "description": "desc3",
+    "code": "102",
+    "students": ["student@student.com", "abc@gmail.com", "qwerty@gmail.com"],
+    "teachers": ["teacher@teacher.com", "teacher@gmail.com"],
+    "tas": ["assistant@gmail.com", "assitant1@gmail.com"]
+  },
+  {
+    "title": "Operating System",
+    "description": "desc4",
+    "code": "103",
+    "students": ["student@student.com", "abc@gmail.com", "qwerty@gmail.com"],
+    "teachers": ["teacher@teacher.com", "teacher@gmail.com"],
+    "tas": ["assistant@gmail.com", "assitant1@gmail.com"]
+  },
+  {
+    "title": "Mathematics I",
+    "description": "desc5",
+    "code": "104",
+    "students": ["student@student.com", "abc@gmail.com", "qwerty@gmail.com"],
+    "teachers": ["teacher@teacher.com", "teacher@gmail.com"],
+    "tas": ["assistant@gmail.com", "assitant1@gmail.com"]
+  },
+  {
+    "title": "Machine Learning",
+    "description": "desc1",
+    "code": "105",
+    "students": ["student@student.com", "abc@gmail.com", "qwerty@gmail.com"],
+    "teachers": ["teacher@teacher.com", "teacher@gmail.com"],
+    "tas": ["assistant@gmail.com", "assitant1@gmail.com"]
+  }
+]

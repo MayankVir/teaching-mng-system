@@ -5,17 +5,32 @@ import authHeader from "./auth-header";
 const BASE_URL = "http://81.4.100.184:5678/";
 // const BASE_URL = "http://localhost:5678/";
 
-const saveOneCourse = (course) => {
-  //   return axios.put(BASE_URL + "api/newCourse/", course, {
-  //     headers: authHeader(),
-  //   });
-  return new Promise((resolve, reject) => {
-    const response = { headers: authHeader, data: course };
-    resolve(response);
-    reject("There is some error");
+const saveOneCourse = (data) => {
+  return axios.post(BASE_URL + "api/course", data, {
+    headers: authHeader(),
+  });
+};
+
+const getAllCourses = () => {
+  return axios.get(BASE_URL + "api/course", {
+    headers: authHeader(),
+  });
+};
+
+const getOneCourse = (id) => {
+  return axios.get(BASE_URL + `api/course/${id}`, {
+    headers: authHeader(),
+  });
+};
+const deleteOneCourse = (id) => {
+  return axios.delete(BASE_URL + `api/course/${id}`, {
+    headers: authHeader(),
   });
 };
 
 export default {
   saveOneCourse,
+  getAllCourses,
+  getOneCourse,
+  deleteOneCourse,
 };

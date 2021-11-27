@@ -22,17 +22,19 @@ const login = (email, password) => {
     .then((response) => {
       if (response.data.token) {
         console.log(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
-        // localStorage.setItem("name", JSON.stringify(response.data.name));
-        // localStorage.setItem("token", JSON.stringify(response.data.token));
-        // localStorage.setItem("type", JSON.stringify(response.data.type));
+        // localStorage.setItem("user", JSON.stringify(response.data));
+        localStorage.setItem("name", JSON.stringify(response.data.name));
+        localStorage.setItem("token", JSON.stringify(response.data.token));
+        localStorage.setItem("type", JSON.stringify(response.data.type));
       }
       return response.data;
     });
 };
 
 const logout = () => {
-  localStorage.removeItem("user");
+  localStorage.removeItem("name");
+  localStorage.removeItem("token");
+  localStorage.removeItem("type");
 };
 
 export default {

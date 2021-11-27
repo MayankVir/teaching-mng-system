@@ -31,12 +31,7 @@ const Navbar = ({ user }) => {
   };
 
   const userName = () => {
-    const user = JSON.parse(window.localStorage["user"]);
-    // const name = JSON.parse(window.localStorage["name"]);
-    // const token = JSON.parse(window.localStorage["token"]);
-    // const type = JSON.parse(window.localStorage["type"]);
-    // const user = {name, token, type}
-    return user.name;
+    return JSON.parse(localStorage.getItem("name").toString());
   };
 
   const userTypeMapping = {

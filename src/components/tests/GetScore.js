@@ -326,9 +326,8 @@ const GetScore = () => {
           },
         });
         setComponents(response.data.components ? response.data.components : []);
-        // var student = window.localStorage["user"];
-        var student = JSON.parse(window.localStorage["user"].toString());
-        var decoded = jwt_decode(student["token"]);
+        var token = JSON.parse(localStorage["token"].toString());
+        var decoded = jwt_decode(token);
         // console.log(decoded);
         console.log(decoded["email"]);
         await TestService.getOneResponse(decoded["email"]).then(

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
@@ -6,7 +7,13 @@ import {
   LOGOUT,
 } from "../actions/types";
 
-const user = JSON.parse(localStorage.getItem("user"));
+const name = JSON.parse(localStorage.getItem("name"));
+const token = JSON.parse(localStorage.getItem("token"));
+const type = JSON.parse(localStorage.getItem("type"));
+let user = { name, type, token };
+if (name == null || token == null || type == null) {
+  user = null;
+}
 
 const initialState = user
   ? { isLoggedIn: true, user }

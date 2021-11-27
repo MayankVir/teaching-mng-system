@@ -16,6 +16,7 @@ const getOneTest = (id) => {
 };
 
 const createOneTest = () => {
+  console.log("coming here");
   return axios.post(BASE_URL + "api/quiz", {}, { headers: authHeader() });
 };
 
@@ -56,10 +57,6 @@ const loadStudentResponse = (id) => {
   return axios.get(BASE_URL + `api/quizassign/${id}`, {
     headers: authHeader(),
   });
-};
-
-const getOneCourse = (id) => {
-  return new Promise();
 };
 
 const putUserResponse = (id, response) => {
