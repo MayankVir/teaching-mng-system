@@ -105,7 +105,13 @@ const VideoMonitor = () => {
           return (
             <video
               key={i}
-              style={{ width: "250px", height: "125px" }}
+              // style={{ width: "175px", height: "125px", margin: "10px 0" }}
+              style={{
+                width: "168px",
+                height: "125px",
+                borderRadius: "10px",
+                margin: "20px",
+              }}
               ref={(VideoElem) => {
                 if (VideoElem) {
                   // VideoElem.id = StreamsRef.current[i].id;

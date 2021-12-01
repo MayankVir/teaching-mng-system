@@ -265,6 +265,7 @@ const GiveTest = () => {
   const socket = io("http://localhost:8000", { secure: true });
   const userVideo = useRef();
 
+  const [studentState, setStudentState] = useState(false);
   const [response, setResponse] = useState({});
   const [components, setComponents] = useState([
     {
@@ -363,6 +364,7 @@ const GiveTest = () => {
             ...response.data.data,
           },
         });
+        console.log(response);
         setComponents(response.data.components ? response.data.components : []);
         setPageLoading(false);
       },
@@ -371,51 +373,68 @@ const GiveTest = () => {
       }
     );
 
-    // New Peer Connection
-    const peer = new Peer(
-      `student_${(Math.floor(Math.random() * 10000) + 1).toString()}`,
-      {
-        host: "localhost",
-        port: 5000,
-        path: "/",
-      }
-    );
+    // Emit socket with email id to check if it exists or not if yes then disconnect this socket andskip this else create new peer and do as usual
+    const studentToken = localStorage.getItem("token");
 
-    peer.on("open", () => {
-      localStorage.setItem("peerId", peer.id);
-    });
+    socket.emit("check-socket", studentToken, (cb) => {
+      if (cb) {
+        setStudentState(true);
+      } else {
+        // New Peer Connection
+        const peer = new Peer(
+          `student_${(Math.floor(Math.random() * 10000) + 1).toString()}`,
+          {
+            host: "localhost",
+            port: 5000,
+            path: "/",
+          }
+        );
 
-    // Local Video Stream on Page loading
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        userVideo.current.srcObject = stream;
-      })
-      .catch((err) => console.log(err));
+        socket.emit("save-my-peer", { token: studentToken, peer: peer.id });
 
-    // Teacher calling to student and student calling back with stream
-    socket.on("send-your-peer-call", (peerId) => {
-      console.log("Request from teacher");
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((stream) => {
-          peer.call(peerId, stream);
-          socket.emit("take-student-id", localStorage.getItem("peerid"));
-        })
-        .catch((err) => console.log(err));
-    });
+        peer.on("open", () => {
+          localStorage.setItem("peerId", peer.id);
+        });
 
-    // Sending emit to server if teacher is present
-    socket.emit("send-me-to-teacher", (data) => {
-      console.log(data);
-      if (data.check) {
+        // Local Video Stream on Page loading
+
         navigator.mediaDevices
           .getUserMedia({ video: true })
           .then((stream) => {
-            peer.call(data.peerId, stream);
-            socket.emit("take-student-id", localStorage.getItem("peerid"));
+            userVideo.current.srcObject = stream;
           })
           .catch((err) => console.log(err));
+
+        // Teacher calling to student and student calling back with stream
+        socket.on("send-your-peer-call", (peerId) => {
+          console.log("Request from teacher");
+          navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then((stream) => {
+              peer.call(peerId, stream);
+              socket.emit("take-student-id", localStorage.getItem("peerid"));
+            })
+            .catch((err) => console.log(err));
+        });
+
+        // Sending emit to server if teacher is present
+        socket.emit("send-me-to-teacher", (data) => {
+          console.log(data);
+          if (data.check) {
+            navigator.mediaDevices
+              .getUserMedia({ video: true })
+              .then((stream) => {
+                peer.call(data.peerId, stream);
+                socket.emit("take-student-id", localStorage.getItem("peerid"));
+              })
+              .catch((err) => console.log(err));
+          }
+        });
+
+        socket.on("connect", () => {
+          console.log("Socket Connected: ", socket.id);
+          // console.log("Test response: ")
+        });
       }
     });
   }, []);
@@ -470,151 +489,161 @@ const GiveTest = () => {
   return (
     <>
       <Container fluid style={{ padding: "20px 40px" }}>
-        <Row>
-          <Col className="ml-3" md="9">
+        {studentState ? (
+          <div>
+            You are already giving the test. You are begin redirected to
+            Dashboard{" "}
+          </div>
+        ) : (
+          <>
             <Row>
-              <h2 className="mt-3 font-weight-bold text-dark mb-0">
-                {testData.title}
-              </h2>
-            </Row>
-            <Row>
-              <p className="text-muted">
-                Description: {testData.data.description}
-              </p>
-            </Row>
-          </Col>
-          <Col
-            className="mt-3"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-start",
-            }}
-          >
-            <Row>
-              <Col md="15">
-                {isTimeLeft() ? (
-                  <FormGroup
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                    }}
-                  >
+              <Col className="ml-3" md="9">
+                <Row>
+                  <h2 className="mt-3 font-weight-bold text-dark mb-0">
+                    {testData.title}
+                  </h2>
+                </Row>
+                <Row>
+                  <p className="text-muted">
+                    Description: {testData.data.description}
+                  </p>
+                </Row>
+              </Col>
+              <Col
+                className="mt-3"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Row>
+                  <Col md="15">
                     {isTimeLeft() ? (
-                      <Label style={{ fontSize: "1.25rem" }}>
-                        Time Remaining
-                      </Label>
-                    ) : (
-                      <></>
-                    )}
-                    <div
-                      style={{
-                        fontSize: "1.5rem",
-                        border: "1px solid black",
-                        background: "white",
-                        borderRadius: "10px",
-                        padding: "5px 10px",
-                      }}
-                    >
-                      <Countdown
-                        date={
-                          Date.now() + (testData.data.duration.end - Date.now())
-                        }
+                      <FormGroup
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "flex-start",
+                          alignItems: "center",
+                        }}
                       >
-                        <div>Time Up Kiddo!!</div>
-                      </Countdown>
-                    </div>
-                  </FormGroup>
-                ) : (
-                  <div
-                    style={{
-                      fontSize: "1.5rem",
-                      border: "1px solid black",
-                      background: "white",
-                      borderRadius: "10px",
-                      padding: "5px 10px",
-                    }}
-                  >
-                    Time Up Kiddo!!
-                  </div>
-                )}
+                        {isTimeLeft() ? (
+                          <Label style={{ fontSize: "1.25rem" }}>
+                            Time Remaining
+                          </Label>
+                        ) : (
+                          <></>
+                        )}
+                        <div
+                          style={{
+                            fontSize: "1.5rem",
+                            border: "1px solid black",
+                            background: "white",
+                            borderRadius: "10px",
+                            padding: "5px 10px",
+                          }}
+                        >
+                          <Countdown
+                            date={
+                              Date.now() +
+                              (testData.data.duration.end - Date.now())
+                            }
+                          >
+                            <div>Time Up Kiddo!!</div>
+                          </Countdown>
+                        </div>
+                      </FormGroup>
+                    ) : (
+                      <div
+                        style={{
+                          fontSize: "1.5rem",
+                          border: "1px solid black",
+                          background: "white",
+                          borderRadius: "10px",
+                          padding: "5px 10px",
+                        }}
+                      >
+                        Time Up Kiddo!!
+                      </div>
+                    )}
+                  </Col>
+                </Row>
               </Col>
             </Row>
-          </Col>
-        </Row>
-        <hr />
-        <div>
-          <Row>
-            {/* <h1>Current user id is {peerId}</h1> */}
+            <hr />
             <div>
-              <video
-                className="students own video"
-                ref={userVideo}
-                muted
-                autoPlay
-                style={{ width: "300px", height: "150px" }}
-              />
-            </div>
-          </Row>
-        </div>
-        <form onSubmit={submitTest}>
-          {" "}
-          {/* {JSON.stringify(components)} */}
-          {components.map((section, sectionIndex) => (
-            <Container
-              key={sectionIndex}
-              className="bg-white rounded p-4 p-lg-5 shadow-sm mt-4"
-              fluid
-            >
-              <h4 className="text-center font-weight-bold mb-0">
-                {section.title}
-              </h4>
-              <p className="text-center text-muted mb-0">
-                {section.data.description}
-              </p>
-              <hr />
-
-              {section.components.map((question, questionIndex) => (
-                <div key={questionIndex}>
-                  <div className="mt-3 mb-4">
-                    {isAdmin()
-                      ? RenderQuestion({
-                          ...question,
-                          index: questionIndex + 1,
-                        })
-                      : RenderQuestion({
-                          ...question,
-                          question_details: question,
-                          index: questionIndex + 1,
-                          sectionIndex: sectionIndex + 1,
-                          response: response,
-                          onResponseChange: changeResponse,
-                          onFilesChange: changeFiles,
-                          UploadToServer: UploadToServer,
-                        })}
-                  </div>
-                  <hr />
+              <Row>
+                {/* <h1>Current user id is {peerId}</h1> */}
+                <div>
+                  <video
+                    className="students own video"
+                    ref={userVideo}
+                    muted
+                    autoPlay
+                    style={{ width: "300px", height: "150px" }}
+                  />
                 </div>
+              </Row>
+            </div>
+            <form onSubmit={submitTest}>
+              {" "}
+              {/* {JSON.stringify(components)} */}
+              {components.map((section, sectionIndex) => (
+                <Container
+                  key={sectionIndex}
+                  className="bg-white rounded p-4 p-lg-5 shadow-sm mt-4"
+                  fluid
+                >
+                  <h4 className="text-center font-weight-bold mb-0">
+                    {section.title}
+                  </h4>
+                  <p className="text-center text-muted mb-0">
+                    {section.data.description}
+                  </p>
+                  <hr />
+
+                  {section.components.map((question, questionIndex) => (
+                    <div key={questionIndex}>
+                      <div className="mt-3 mb-4">
+                        {isAdmin()
+                          ? RenderQuestion({
+                              ...question,
+                              index: questionIndex + 1,
+                            })
+                          : RenderQuestion({
+                              ...question,
+                              question_details: question,
+                              index: questionIndex + 1,
+                              sectionIndex: sectionIndex + 1,
+                              response: response,
+                              onResponseChange: changeResponse,
+                              onFilesChange: changeFiles,
+                              UploadToServer: UploadToServer,
+                            })}
+                      </div>
+                      <hr />
+                    </div>
+                  ))}
+                </Container>
               ))}
-            </Container>
-          ))}
-          {isAdmin() ? (
-            <div className="mt-4 mb-3 mb-lg-5 d-flex">
-              <Button onClick={(e) => editTest(e)} color="success">
-                Edit Test
-              </Button>
-            </div>
-          ) : (
-            <div className="mt-4 mb-3 mb-lg-5 d-flex">
-              <Button color="success">Submit</Button>
-            </div>
-          )}
-          {/* <div className="mt-4 mb-3 mb-lg-5 d-flex">
+              {isAdmin() ? (
+                <div className="mt-4 mb-3 mb-lg-5 d-flex">
+                  <Button onClick={(e) => editTest(e)} color="success">
+                    Edit Test
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-4 mb-3 mb-lg-5 d-flex">
+                  <Button color="success">Submit</Button>
+                </div>
+              )}
+              {/* <div className="mt-4 mb-3 mb-lg-5 d-flex">
           <Button color="success">Submit</Button>
         </div> */}
-        </form>
+            </form>
+          </>
+        )}
       </Container>
       <ToastContainer />
     </>
