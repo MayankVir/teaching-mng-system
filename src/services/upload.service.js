@@ -1,9 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import axios from "axios";
 import authHeader from "./auth-header";
-
-const BASE_URL = "http://81.4.100.184:5678/";
-// const BASE_URL = "http://localhost:5678/";
+import { BASE_URL } from "../assets/js/config";
 
 async function uploadFile(file, testId) {
   let data = new FormData();

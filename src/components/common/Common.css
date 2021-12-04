@@ -5,7 +5,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  height: 8vh;
+  height: 9vh;
   background: white;
   /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
   border-bottom: 0.5px solid rgb(201, 201, 201);
@@ -275,23 +275,25 @@
   margin-top: 1rem;
   border-radius: 0.25rem;
   transition-duration: 300ms;
-  color: #162521;
+  color: white;
 }
 
 #sidenav > li:hover {
   cursor: pointer;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
 }
 
 #sidenav > li.active {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  background-color: white;
+  border-radius: 0 10px 10px 0;
 }
 
 #sidenav > li.active > a {
   color: #4f7cac;
 }
 
-@media (max-width: 991.98px) {
+@media (max-width: 1024px) {
   #sidebar {
     margin-left: -250px;
     z-index: 11;
@@ -311,10 +313,29 @@
 .hoverPointer {
   cursor: pointer;
 }
+
 .spinner {
   -webkit-animation: spinnerAnimation 2s infinite ease;
   animation: spinnerAnimation 2s infinite ease;
 }
+
+.createRegister {
+  border: none;
+  /* border-bottom: 1px solid #212529; */
+  box-shadow: rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0 / 15%) 0px 6px 6px;
+  padding: 10px 15px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+/* .createTitle:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #86b7fe;
+  outline: 0;
+  border-radius: 5px;
+  box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+} */
 
 @-webkit-keyframes spinnerAnimation {
   0% {
@@ -390,5 +411,8 @@
   .login-heading,
   .register-heading {
     margin: 5% 0;
+  }
+
+  .choiceButtons {
   }
 }

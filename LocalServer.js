@@ -14,28 +14,21 @@ const { PeerServer } = require("peer");
 const peerServer = PeerServer({ port: 5000, path: "/" });
 
 let connectedTokens = [];
-let studentIds = [];
 let teacherId;
 
 // This function triggers whenever new peer gets connected, either student or teacher.
 peerServer.on("connection", (client) => {
   const checkId = client.id.split("_");
   if (checkId[0] === "student") {
-    studentIds.push(client.id);
     console.log("Student Peer Connected");
-  } else {
-    console.log("Teacher Peer Connected");
-  }
-  if (checkId[0] === "teacher") {
+  } else if (checkId[0] === "teacher") {
     teacherId = client.id;
-    console.log(teacherId);
+  } else if (checkId[0] === "assistant") {
   }
-  console.log(studentIds);
 });
 
 // This function triggers whenever new peer gets disconnected. If the peer is student, then we filter out the object from all the connected students arrays so as to only keep students which are giving test
 peerServer.on("disconnect", (client) => {
-  studentIds = studentIds.filter((id) => id !== client.id);
   connectedTokens = connectedTokens.filter(
     (eachStudent) => eachStudent.peer !== client.id
   );
@@ -50,7 +43,7 @@ io.on("connection", (socket) => {
   socket.on("hello-teacher", (id) => {
     // This emits to all the students with teacher peer id to call
     socket.broadcast.emit("go-to-students", id);
-    teacherId = id;
+    // teacherId = id;
   });
 
   // students sending stream when teacher joins
@@ -95,6 +88,13 @@ io.on("connection", (socket) => {
         each.peer = data.peer;
       }
     });
+  });
+
+  socket.on("take-student-stream", (data) => {
+    var array = new Uint8Array(data);
+
+    // var blob = new Blob([array], {'type': 'video/mp4'});
+    console.log(array);
   });
 });
 

@@ -7,9 +7,9 @@ import {
   LOGOUT,
 } from "../actions/types";
 
-const name = JSON.parse(localStorage.getItem("name"));
-const token = JSON.parse(localStorage.getItem("token"));
-const type = JSON.parse(localStorage.getItem("type"));
+const name = JSON.parse(localStorage.getItem("priksha_name"));
+const token = JSON.parse(localStorage.getItem("priksha_token"));
+const type = JSON.parse(localStorage.getItem("priksha_type"));
 let user = { name, type, token };
 if (name == null || token == null || type == null) {
   user = null;

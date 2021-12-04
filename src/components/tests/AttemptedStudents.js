@@ -3,7 +3,7 @@ import TestService from "../../services/test.service";
 import { useHistory } from "react-router-dom";
 import { Container, Col, Row, Table } from "reactstrap";
 import Icon from "@mdi/react";
-import { mdiEye, mdiArrowTopRight, mdiLoading } from "@mdi/js";
+import { mdiArrowTopRight, mdiLoading } from "@mdi/js";
 
 const AtttemptedStudents = () => {
   var [studentList, setStudentList] = useState([]);

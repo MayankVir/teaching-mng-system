@@ -7,7 +7,7 @@ import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
 
 import { register } from "../../actions/auth";
-import { Redirect } from "react-router-dom";
+import { FormGroup, Label } from "reactstrap";
 
 const required = (value) => {
   if (!value) {
@@ -112,45 +112,49 @@ const Register = () => {
       <div className="register-input-div">
         <h2 className="register-heading">Register New User</h2>
         <Form onSubmit={handleRegister} ref={form} className="register-form">
-          <div className="register-form-name">
-            <label htmlFor="name">Full Name</label>
+          {/* <div className="register-form-name"> */}
+          <FormGroup className="mb-4">
+            <Label>
+              <h6>Full Name</h6>
+            </Label>
             <Input
               type="text"
-              className="register-form-nameInput"
+              className="createRegister"
               name="name"
               value={state.name}
               onChange={onChangeForm}
               validations={[required]}
             />
-          </div>
-          <div className="register-form-email">
-            <label htmlFor="email">Email</label>
+          </FormGroup>
+          {/* </div> */}
+          <FormGroup className="mb-4">
+            <Label>Email</Label>
             <Input
               type="email"
               autoComplete="username"
-              className="register-form-emailInput"
+              className="createRegister"
               name="email"
               value={state.email}
               onChange={onChangeForm}
               validations={[required, validEmail]}
             />
-          </div>
-          <div className="register-form-mobile">
-            <label htmlFor="mobile">Mobile</label>
+          </FormGroup>
+          <FormGroup className="mb-4">
+            <Label>Mobile</Label>
             <Input
               type="number"
-              className="register-form-mobileInput"
+              className="createRegister"
               name="mobile"
               value={state.mobile}
               onChange={onChangeForm}
               validations={[required, validMobile]}
             />
-          </div>
+          </FormGroup>
           <div>
             <label className="mb-0">User Type</label>
           </div>
           <div className="user-types">
-            <div>
+            <div style={{ margin: "0 10px 0 0" }}>
               <input
                 className="form-check-input"
                 type="radio"
@@ -159,11 +163,15 @@ const Register = () => {
                 defaultChecked
                 onChange={onChangeForm}
               />
-              <label className="form-check-label" htmlFor="type">
+              <label
+                className="form-check-label"
+                htmlFor="type"
+                style={{ margin: "0 5px" }}
+              >
                 Student
               </label>
             </div>
-            <div>
+            <div style={{ margin: "0 10px 0 0" }}>
               <input
                 className="form-check-input"
                 type="radio"
@@ -171,11 +179,31 @@ const Register = () => {
                 value="T"
                 onChange={onChangeForm}
               />
-              <label className="form-check-label" htmlFor="type">
+              <label
+                className="form-check-label"
+                htmlFor="type"
+                style={{ margin: "0 5px" }}
+              >
                 Teacher
               </label>
             </div>
-            <div>
+            <div style={{ margin: "0 10px 0 0" }}>
+              <input
+                className="form-check-input"
+                type="radio"
+                name="type"
+                value="TA"
+                onChange={onChangeForm}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="type"
+                style={{ margin: "0 5px" }}
+              >
+                TA
+              </label>
+            </div>
+            <div style={{ margin: "0 10px 0 0" }}>
               <input
                 className="form-check-input"
                 type="radio"
@@ -183,23 +211,27 @@ const Register = () => {
                 value="A"
                 onChange={onChangeForm}
               />
-              <label className="form-check-label" htmlFor="type">
+              <label
+                className="form-check-label"
+                htmlFor="type"
+                style={{ margin: "0 5px" }}
+              >
                 Admin
               </label>
             </div>
           </div>
-          <div className="register-form-pass">
-            <label htmlFor="password">Password</label>
+          <FormGroup className="mb-4">
+            <Label>Password</Label>
             <Input
               type="password"
-              className="register-form-passInput"
+              className="createRegister"
               autoComplete="new-password"
               name="password"
               value={state.password}
               onChange={onChangeForm}
               validations={[required, vpassword]}
             />
-          </div>
+          </FormGroup>
 
           <div className="register-signup">
             <button

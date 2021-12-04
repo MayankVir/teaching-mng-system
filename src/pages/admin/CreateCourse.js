@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Form, FormGroup, Input, Label, Container } from "reactstrap";
 import CourseService from "../../services/course.service";
-import { Link, Redirect, useHistory } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 function CreateCourse() {
-  const { id } = useParams();
+  // const { id } = useParams();
   const [courseData, setCourseData] = useState({
     title: "",
     description: "",
@@ -33,7 +33,7 @@ function CreateCourse() {
 
   const history = useHistory();
   const isAdmin = () => {
-    var type = JSON.parse(localStorage["type"].toString());
+    var type = JSON.parse(localStorage["priksha_type"].toString());
     // console.log(admin.name);
 
     if (type === "A" || type === "T") {

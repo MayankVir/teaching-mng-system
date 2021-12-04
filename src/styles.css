@@ -1,6 +1,12 @@
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import "../node_modules/bootstrap/dist/css/bootstrap.css";
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import url("https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -26,5 +32,5 @@ html {
 }
 
 * {
-  transition-duration: 300ms;
+  transition-duration: 100ms;
 }

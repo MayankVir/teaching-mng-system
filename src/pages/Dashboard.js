@@ -25,6 +25,14 @@ const Dashboard = () => {
           Welcome Teacher!!
         </div>
       );
+    case "TA":
+      return (
+        <div
+          style={{ background: "#F2F3F7", height: "90vh", userSelect: "none" }}
+        >
+          Welcome Assistant!!
+        </div>
+      );
     default:
       return <div>Some error occured!</div>;
   }

@@ -1,225 +1,26 @@
-import { mdiPlus, mdiLoading } from "@mdi/js";
+import { mdiLoading } from "@mdi/js";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Button,
   Form,
-  FormGroup,
-  Input,
-  Label,
+  // FormGroup,
+  // Input,
+  // Label,
   Row,
   Col,
   Container,
 } from "reactstrap";
-import TestQuestionReview from "./extras/TestQuestionReview";
 // import DragComponent from "./DragComponent";
 import UserService from "../../services/user.service";
 import { Redirect, useHistory } from "react-router-dom";
-// import Duration from "./Duration";
-// import jwt_decode from "jwt-decode";
-
-// import { ReactMediaRecorder } from "react-media-recorder";
-import { Media, Player, controls } from "react-media-player";
 import TestService from "../../services/test.service";
 import RenderQuestion from "./extras/RenderQuestion";
-const { PlayPause, MuteUnmute } = controls;
-var mime = require("mime-types");
+// var mime = require("mime-types");
 
 const ReviewTest = () => {
   const { id } = useParams();
-  // const RenderQuestion = ({
-  //   question_details,
-  //   index,
-  //   sectionIndex,
-  //   response,
-  //   marking,
-  //   onReviewChange,
-  //   onScoreChange,
-  // }) => {
-  //   console.log(response);
-  //   if (response !== undefined) {
-  //     if (response[sectionIndex] !== undefined) {
-  //       if (response[sectionIndex][index] !== undefined) {
-  //         var acceptFileType = {
-  //           Any: "",
-  //           Image: "image/*",
-  //           Video: "video/*",
-  //           Audio: "audio/*",
-  //           PDFs: ".pdf",
-  //           DOCs: ".doc, .docx",
-  //         };
-  //         var type = question_details["type"];
-  //         var question = question_details["question"];
-  //         var options = question_details["options"];
-  //         var isRequired = question_details["isRequired"];
-  //         var questionFiles = question_details["questionFiles"];
-  //         var ansFileType = question_details["ansFileType"];
-  //         var identifier = sectionIndex + "," + index;
-  //         //   var identifier = sectionIndex + "," + index;
-  //         var questionBox = null;
-  //         let questionFilesBox = questionFiles ? (
-  //           questionFiles.map((fileData, index) => {
-  //             const fileType = mime.lookup(fileData.name);
-  //             const fileExtn = fileType.substring(0, fileType.indexOf("/"));
-  //             console.log(fileExtn);
-  //             if (fileExtn === "image") {
-  //               return (
-  //                 <div className="col-6" key={index}>
-  //                   <img
-  //                     className="mb-3"
-  //                     style={{ maxWidth: "100%" }}
-  //                     src={fileData.url}
-  //                     alt={fileData.name}
-  //                   />
-  //                 </div>
-  //               );
-  //             } else if (fileExtn === "video") {
-  //               return (
-  //                 <div className="col-6" key={index}>
-  //                   <video
-  //                     controls
-  //                     className="mb-3"
-  //                     style={{ maxWidth: "100%" }}
-  //                   >
-  //                     <source src={fileData.url} />
-  //                   </video>
-  //                 </div>
-  //               );
-  //             } else if (fileExtn === "audio") {
-  //               return (
-  //                 <div className="col-6" key={index}>
-  //                   <audio
-  //                     controls
-  //                     className="mb-3"
-  //                     style={{ maxWidth: "100%" }}
-  //                   >
-  //                     <source src={fileData.url} />
-  //                   </audio>
-  //                 </div>
-  //               );
-  //             } else return <span key={index}></span>;
-  //           })(
-  //             console.log(
-  //               type,
-  //               question,
-  //               options,
-  //               isRequired,
-  //               questionFiles,
-  //               ansFileType,
-  //               identifier
-  //             )
-  //           )
-  //         ) : (
-  //           <></>
-  //         );
-
-  //         switch (type) {
-  //           case "descriptive":
-  //             questionBox = (
-  //               <>
-  //                 <p className="text-muted mb-1 small">
-  //                   Descriptive answer type question.
-  //                 </p>
-  //                 {/* <div className="row justify-content-center d-flex">
-  //                   {questionFilesBox}
-  //                 </div> */}
-  //                 <p className="form-control">
-  //                   {response[sectionIndex][index]}
-  //                 </p>
-  //               </>
-  //             );
-  //             break;
-  //           case "checkbox":
-  //             questionBox = (
-  //               <>
-  //                 <p className="text-muted mb-1 small">
-  //                   Pick the correct option.
-  //                 </p>
-  //                 <div className="row justify-content-center d-flex">
-  //                   {console.log("Questions Files Box: ", questionFilesBox)}
-  //                 </div>
-  //                 <div>
-  //                   Selected :{" "}
-  //                   {
-  //                     (console.log(response[sectionIndex]),
-  //                     response[sectionIndex][index])
-  //                   }
-  //                 </div>
-  //               </>
-  //             );
-  //             break;
-  //           case "record":
-  //             questionBox = (
-  //               <>
-  //                 <div className="row justify-content-center d-flex">
-  //                   {questionFilesBox}
-  //                 </div>
-
-  //                 <Media>
-  //                   <div className="media">
-  //                     <div className="media-player">
-  //                       <Player src={response[sectionIndex][index]} />
-  //                     </div>
-  //                     <div className="media-controls">
-  //                       <PlayPause />
-  //                       <MuteUnmute />
-  //                     </div>
-  //                   </div>
-  //                 </Media>
-  //               </>
-  //             );
-  //             break;
-  //           case "file":
-  //             questionBox = (
-  //               <>
-  //                 <p className="text-muted mb-1 small">
-  //                   Upload the required file type. Allowed: {ansFileType}
-  //                 </p>
-  //                 <div className="row justify-content-center d-flex">
-  //                   {questionFilesBox}
-  //                 </div>
-  //                 <Input
-  //                   type="file"
-  //                   value={response[sectionIndex][index]}
-  //                   accept={acceptFileType[ansFileType]}
-  //                 />
-  //               </>
-  //             );
-  //             break;
-  //           default:
-  //             questionBox = <></>;
-  //         }
-  //         return (
-  //           <>
-  //             <h5 className="mb-0">
-  //               <b>Question {index}.</b> {question}
-  //               {isRequired && <span className="text-danger ml-1">*</span>}
-  //             </h5>
-  //             {questionBox}
-  //             <Col>
-  //               <FormGroup>
-  //                 <Label className="mb-0 small">Score</Label>
-  //                 <Input
-  //                   name={identifier}
-  //                   placeholder="Enter your score"
-  //                   onChange={onScoreChange}
-  //                 />
-  //                 <Label className="mb-0 small">Review</Label>
-  //                 <Input
-  //                   name={identifier}
-  //                   placeholder="Enter your review"
-  //                   onChange={onReviewChange}
-  //                 />
-  //               </FormGroup>
-  //             </Col>
-  //           </>
-  //         );
-  //       }
-  //     }
-  //   }
-  //   return <>Nothing to show</>;
-  // };
 
   const [components, setComponents] = useState([
     {
@@ -321,6 +122,7 @@ const ReviewTest = () => {
 
   const saveReview = (e, callback) => {
     e.preventDefault();
+    setSaving(true);
     console.log(marking);
     TestService.getAssignedUsers(testId).then(
       (res) => {
@@ -339,13 +141,14 @@ const ReviewTest = () => {
         return <Redirect to="/dashboard" />;
       }
     );
+    setSaving(false);
   };
 
-  const updateQuestion = (sectionIndex, questionIndex, data) => {
-    const _components = [...components];
-    _components[sectionIndex].components[questionIndex] = data;
-    setComponents(_components);
-  };
+  // const updateQuestion = (sectionIndex, questionIndex, data) => {
+  //   const _components = [...components];
+  //   _components[sectionIndex].components[questionIndex] = data;
+  //   setComponents(_components);
+  // };
 
   if (pageLoading) {
     return (

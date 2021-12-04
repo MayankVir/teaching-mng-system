@@ -29,7 +29,7 @@ const AllCourses = () => {
   }, []);
 
   const isAdmin = () => {
-    var type = JSON.parse(localStorage["type"].toString());
+    var type = JSON.parse(localStorage["priksha_type"].toString());
     // console.log(admin.name);
 
     if (type === "A") {
@@ -107,6 +107,7 @@ const AllCourses = () => {
             <select
               name="teacherList"
               id="teachers"
+              className="form-control mb-3"
               onChange={displaySpecificCourses}
               style={{ width: "25%" }}
             >

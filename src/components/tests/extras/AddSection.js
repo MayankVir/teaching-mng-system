@@ -2,6 +2,7 @@ import React from "react";
 import DragComponent from "./DragComponent";
 import { Button, FormGroup, Input, Label } from "reactstrap";
 import Icon from "@mdi/react";
+import { ReactSortable } from "react-sortablejs";
 import { mdiPlus } from "@mdi/js";
 import AddQuestion from "./AddQuestion";
 
@@ -20,9 +21,15 @@ const AddSection = ({
   addSection,
 }) => {
   return (
-    <div>
+    <div
+      style={{
+        boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+        padding: "0 0 20px 0",
+        borderRadius: "10px",
+      }}
+    >
       {/* {console.log(components)} */}
-      <div
+      <ReactSortable
         list={components}
         setList={setComponents}
         handle=".handle"
@@ -36,7 +43,7 @@ const AddSection = ({
             content={
               <div>
                 <h3>Section Details</h3>
-                <FormGroup>
+                <FormGroup className="mb-3">
                   <Label className="mb-0 font-weight-bold">Section Title</Label>
                   <Input
                     type="text"
@@ -44,11 +51,11 @@ const AddSection = ({
                     required
                     value={section.title}
                     onChange={(e) => handleSectionTitle(e, sectionIndex)}
-                    className="border-primary py-3"
+                    className="createSection py-3"
                     placeholder="Section Title"
                   />
                 </FormGroup>
-                <FormGroup>
+                <FormGroup className="mb-3">
                   <Label className="mb-0 font-weight-bold">
                     Section Description
                   </Label>
@@ -57,7 +64,7 @@ const AddSection = ({
                     name="testDescription"
                     value={section.data.description}
                     onChange={(e) => handleSectionDescription(e, sectionIndex)}
-                    className="border-primary py-3"
+                    className="createSection py-3"
                     placeholder="Test Description"
                   />
                 </FormGroup>
@@ -119,7 +126,7 @@ const AddSection = ({
             duplicateAction={() => duplicateSection(sectionIndex)}
           />
         ))}
-      </div>
+      </ReactSortable>
       <div className="text-center mt-4">
         <Button
           onClick={addSection}

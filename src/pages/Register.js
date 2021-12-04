@@ -1,5 +1,4 @@
 import React from "react";
-import authImg from "../assets/img/auth-image.svg";
 import RegisterUser from "../components/register";
 import "../components/common/Common.css";
 

@@ -3,7 +3,7 @@ import {
   mdiMonitorDashboard,
   mdiNotebookEdit,
   mdiAccountPlus,
-  mdiBookCheck,
+  // mdiBookCheck,
   mdiBookMultiple,
 } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -22,42 +22,35 @@ const Sidebar = ({ user }) => {
       value: "dashboard",
       icon: mdiMonitorDashboard,
       text: "Dashboard",
-      showLink: ["S", "T", "A"],
+      showLink: ["S", "T", "A", "TA"],
     },
     {
       to: "/tests",
       value: "tests",
       icon: mdiNotebookEdit,
       text: "Tests",
-      showLink: ["S", "T", "A"],
+      showLink: ["S", "T", "A", "TA"],
     },
     {
       to: "/register",
       value: "register",
       icon: mdiAccountPlus,
-      text: "Register Teacher",
+      text: "New Registration",
       showLink: ["A"],
     },
     // {
-    //   to: "/assigncourses",
-    //   value: "assigncourses",
+    //   to: "/courses",
+    //   value: "courses",
     //   icon: mdiBookCheck,
-    //   text: "Assign Courses",
-    //   showLink: ["A"],
+    //   text: "Courses",
+    //   showLink: ["T", "TA"],
     // },
-    {
-      to: "/courses",
-      value: "courses",
-      icon: mdiBookCheck,
-      text: "Courses",
-      showLink: ["T"],
-    },
     {
       to: "/allcourses",
       value: "allcourses",
       icon: mdiBookMultiple,
       text: "All Courses",
-      showLink: ["A", "T"],
+      showLink: ["A"],
     },
   ];
 
@@ -70,8 +63,8 @@ const Sidebar = ({ user }) => {
   return (
     <nav
       id="sidebar"
-      className={`bg-white ${sideBarOpened ? "show" : ""}`}
-      // style={{ overflow: "auto" }}
+      className={`bg-dark ${sideBarOpened ? "show" : ""}`}
+      style={{ border: "none" }}
     >
       <Scrollbars style={{ width: 500, height: 600 }}>
         <ul className="list-unstyled" id="sidenav">
@@ -79,7 +72,9 @@ const Sidebar = ({ user }) => {
             item.showLink.includes(user.type) ? (
               <li
                 key={index}
-                className={`sideTab ${activeIndex === index ? "active" : ""}`}
+                className={`sideTab ${
+                  activeIndex === index ? "active " : "text-white"
+                }`}
               >
                 <Link to={item.to} className="text-decoration-none d-flex">
                   <Icon

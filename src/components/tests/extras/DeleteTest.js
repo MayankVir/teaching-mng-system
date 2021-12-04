@@ -1,19 +1,19 @@
 import { mdiAlertCircleOutline, mdiLoading } from "@mdi/js";
 import Icon from "@mdi/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "reactstrap";
 import TestService from "../../../services/test.service";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { ToastContainer, toast } from "react-toast";
 
 const DeleteTest = () => {
   const [deleting, setDeleting] = useState(false);
-  const [testData, setTestData] = useState({
-    title: "",
-    data: {
-      description: "",
-    },
-  });
+  // const [testData, setTestData] = useState({
+  //   title: "",
+  //   data: {
+  //     description: "",
+  //   },
+  // });
 
   let history = useHistory();
 
@@ -22,19 +22,19 @@ const DeleteTest = () => {
       ? history.location.pathname.split("/").pop()
       : null;
 
-  useEffect(() => {
-    TestService.getOneTest(testId).then(
-      (response) => {
-        setTestData({
-          title: response.data.title ? response.data.title : "",
-          data: { description: "", ...response.data.data },
-        });
-      },
-      (error) => {
-        return <Redirect to="/dashboard" />;
-      }
-    );
-  }, [testId]);
+  // useEffect(() => {
+  //   TestService.getOneTest(testId).then(
+  //     (response) => {
+  //       setTestData({
+  //         title: response.data.title ? response.data.title : "",
+  //         data: { description: "", ...response.data.data },
+  //       });
+  //     },
+  //     (error) => {
+  //       return <Redirect to="/dashboard" />;
+  //     }
+  //   );
+  // }, [testId]);
 
   const goBack = () => {
     history.push("/tests");
@@ -69,13 +69,13 @@ const DeleteTest = () => {
             </div>
             <h3>Are you sure you want to delete?</h3>
             <p className="text-center text-muted">
-              You are going to delete test titled: {testData.title}
+              {/* You are going to delete test titled: {testData.title} */}
               <br />
               <span className="text-danger">
                 Note: This action is not reversable!
               </span>
             </p>
-            <div className="d-flex mt-3">
+            <div className="d-flex mt-3 justify-content-between">
               <Button color="success" onClick={goBack}>
                 Go Back
               </Button>

@@ -31,18 +31,21 @@ const Navbar = ({ user }) => {
   };
 
   const userName = () => {
-    return JSON.parse(localStorage.getItem("name").toString());
+    return JSON.parse(localStorage.getItem("priksha_name").toString());
   };
 
   const userTypeMapping = {
     A: "Admin",
     S: "Student",
     T: "Teacher",
-    E: "Evaluator",
+    TA: "Assistant",
   };
 
   return (
-    <nav className="navbar navbar-light bg-white border fixed-top px-3">
+    <nav
+      className="navbar navbar-light bg-dark border-0 fixed-top px-3 "
+      style={{ height: "9vh" }}
+    >
       {user && (
         <div
           className="mr-auto text-primary d-flex"

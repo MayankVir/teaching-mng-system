@@ -13,10 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Test from "./pages/Test";
 import Sidebar from "./components/common/Sidebar";
 import CreateTest from "./components/tests/CreateTest";
-// import PreviewTest from "./components/tests/PreviewTest";
-// import AssignCourses from "./pages/admin/AssignCourses";
 import Courses from "./pages/teacher/Courses";
-// import { ToastContainer, toast } from "react-toast";
 
 import Authentication from "./components/common/Authentication";
 

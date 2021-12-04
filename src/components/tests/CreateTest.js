@@ -8,11 +8,8 @@ import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import AddSection from "./extras/AddSection";
 import "../common/Common.css";
-import { ToastContainer, toast } from "react-toast";
+import { toast } from "react-toast";
 import CourseService from "../../services/course.service";
-// import DatePicker from "react-datepicker";
-// import { DateTime } from "react-datetime-bootstrap";
-// import "react-datepicker/dist/react-datepicker.css";
 
 const CreateTest = (props) => {
   //   const { control, register, handleSubmit } = useForm();
@@ -172,6 +169,7 @@ const CreateTest = (props) => {
         score: 0,
         review: "",
         ans_mcq: [],
+        optionType: "radio",
       },
     ];
     setComponents(_components);
@@ -246,7 +244,7 @@ const CreateTest = (props) => {
   };
 
   const isAdmin = () => {
-    var type = JSON.parse(localStorage["type"].toString());
+    var type = JSON.parse(localStorage["priksha_type"].toString());
     // console.log(admin.name);
 
     if (type === "A") {
@@ -256,7 +254,7 @@ const CreateTest = (props) => {
     }
   };
   const isTeacher = () => {
-    var type = JSON.parse(localStorage["type"].toString());
+    var type = JSON.parse(localStorage["priksha_type"].toString());
     // console.log(admin.name);
 
     if (type === "T") {
@@ -288,181 +286,221 @@ const CreateTest = (props) => {
       {!isAdmin() && !isTeacher() ? (
         <div>You are not Authorised here</div>
       ) : (
-        <div className="container-fluid" style={{ padding: "15px 30px" }}>
-          <div className="row pt-3">
-            <div className="col">
-              {pageLoading ? (
-                <div
-                  className="justify-content-center align-items-end d-flex"
-                  style={{ minHeight: "250px" }}
-                >
-                  <Icon
-                    path={mdiLoading}
-                    className="spinner mr-2 text-primary"
-                    size={2}
-                  />
-                </div>
-              ) : (
-                <h3>Test Details</h3>
-              )}
-            </div>
-          </div>
-          {!pageLoading && (
-            <Form onSubmit={(e) => saveTest(e)}>
-              <div>
-                <FormGroup className="mb-3">
-                  <Label>Test Title</Label>
-                  <Input
-                    type="text"
-                    name="title"
-                    required
-                    value={testData.title}
-                    onChange={handleTitle}
-                    className="border-primary py-3"
-                    placeholder="Test Title"
-                  />
-                </FormGroup>
-                <FormGroup className="mb-3">
-                  <Label>Test Description</Label>
-                  <Input
-                    type="textarea"
-                    required
-                    value={testData.data.description}
-                    onChange={handleDescription}
-                    className="border-primary py-3"
-                    placeholder="Test Description"
-                  />
-                  <FormGroup className="mt-3">
-                    <Label>Test Duration</Label>
+        <>
+          {/* <hr /> */}
+          <div className="bg-white">
+            <div
+              className="container-fluid"
+              style={{ padding: "15px 10%", background: "#F2F3F7" }}
+            >
+              <div className="row pt-3">
+                <div className="col">
+                  {pageLoading ? (
                     <div
-                      className="smallerScreenTest d-flex justify-content-between"
-                      style={{ width: "50%" }}
+                      className="justify-content-center align-items-end d-flex"
+                      style={{ minHeight: "250px" }}
                     >
-                      <div>
-                        <Label className=" mb-0">Start Date & Time</Label>
-                        <Datetime
-                          className="w-30"
-                          inputProps={{ placeholder: "Start Date & Time" }}
-                          value={new Date(testData.data.duration.start)}
-                          onChange={handleDurationStart}
-                        />
-                      </div>
-                      <div>
-                        <Label className=" mb-0">End Date & Time</Label>
-                        <Datetime
-                          className="w-30"
-                          inputProps={{ placeholder: "End Date & Time" }}
-                          value={new Date(testData.data.duration.end)}
-                          onChange={handleDurationEnd}
-                        />
-                      </div>
+                      <Icon
+                        path={mdiLoading}
+                        className="spinner mr-2 text-primary"
+                        size={2}
+                      />
                     </div>
-                  </FormGroup>
-                </FormGroup>
-
-                <FormGroup>
-                  <Row>
-                    <Col style={{ flex: 1 }}>
-                      <Row style={{ padding: "10px" }}>
-                        <h5 style={{ margin: "5px 0" }}>Select any course</h5>
-                        <select
-                          name="courses"
-                          id="courses"
-                          // style={{ padding: "0 15px" }}
-                          onChange={handleCourseSelected}
-                        >
-                          <option value="default">Select any course</option>
-                          {CourseList.map((course) => {
-                            return (
-                              <option
-                                key={course._id}
-                                value={course._id}
-                                selected={
-                                  testData.course === course._id ? true : false
-                                }
-                              >{`${course.title} (${course.code})`}</option>
-                            );
-                          })}
-
-                          {/* <option value="course2">Course 2</option>
-                          <option value="course3">Course 3</option>
-                          <option value="course4">Course 4</option>
-                          <option value="course5">Course 5</option>
-                          <option value="course6">Course 6</option>
-                          <option value="course7">Course 7</option> */}
-                        </select>
-                      </Row>
-                    </Col>
-                    <Col
+                  ) : (
+                    <h2
                       style={{
-                        flex: 0,
-                        display: "flex",
-                        alignItems: "center",
+                        textAlign: "center",
+                        textDecoration: "underline",
                       }}
                     >
-                      {" "}
-                      <h3>OR</h3>
-                    </Col>
-                    <Col>
-                      <Label className="mb-0">Assign Test</Label>
+                      Test Details
+                    </h2>
+                  )}
+                </div>
+              </div>
+              {!pageLoading && (
+                <Form onSubmit={(e) => saveTest(e)}>
+                  <div>
+                    <FormGroup className="mb-4">
+                      <Label>
+                        <h4>Test Title</h4>
+                      </Label>
+                      <Input
+                        type="text"
+                        name="title"
+                        required
+                        value={testData.title}
+                        onChange={handleTitle}
+                        className="createTitle p-10"
+                        placeholder="Test Title"
+                      />
+                    </FormGroup>
+                    <FormGroup className="mb-4">
+                      <Label>
+                        <h4>Test Description</h4>
+                      </Label>
                       <Input
                         type="textarea"
                         required
-                        value={testData.data.assign}
-                        onChange={handleAssign}
-                        className="border-primary py-3"
-                        placeholder="Paste comma se parated emails to assign"
-                        disabled={isCourseSelected}
+                        value={testData.data.description}
+                        onChange={handleDescription}
+                        className="createTitle p-10"
+                        placeholder="Test Description"
                       />
-                    </Col>
-                  </Row>
-                </FormGroup>
+                      <FormGroup className="mt-4">
+                        <Label>
+                          <h4>Test Duration</h4>
+                        </Label>
+                        <div
+                          className="smallerScreenTest d-flex justify-content-between"
+                          style={{ width: "75%" }}
+                        >
+                          <div>
+                            <Label className=" mb-0">
+                              <h6>Start Date & Time</h6>
+                            </Label>
+                            <Datetime
+                              className="w-30"
+                              inputProps={{
+                                className: "createTitle",
+                                placeholder: "Start Date & Time",
+                              }}
+                              value={new Date(testData.data.duration.start)}
+                              onChange={handleDurationStart}
+                              // className=""
+                            />
+                          </div>
+                          <div>
+                            <Label className=" mb-0">
+                              <h6>End Date & Time</h6>
+                            </Label>
+                            <Datetime
+                              className="w-30"
+                              inputProps={{
+                                className: "createTitle",
+                                placeholder: "End Date & Time",
+                              }}
+                              value={new Date(testData.data.duration.end)}
+                              onChange={handleDurationEnd}
+                            />
+                          </div>
+                        </div>
+                      </FormGroup>
+                    </FormGroup>
 
-                <h3 className="mt-4">Test Structure</h3>
-                <p className="text-secondary mb-0" style={{ opacity: "0.5" }}>
-                  Add your own questions with fields for the test.
-                </p>
-              </div>
-              <AddSection
-                components={components}
-                setComponents={setComponents}
-                handleSectionTitle={handleSectionTitle}
-                handleSectionDescription={handleSectionDescription}
-                updateQuestionOrder={updateQuestionOrder}
-                updateQuestion={updateQuestion}
-                deleteQuestion={deleteQuestion}
-                duplicateQuestion={duplicateQuestion}
-                addQuestion={addQuestion}
-                deleteSection={deleteSection}
-                duplicateSection={duplicateSection}
-                addSection={addSection}
-              />
-              <div className="mt-4 mb-3 mb-lg-5 d-flex">
-                <Button onClick={(e) => previewTest(e)} color="primary">
-                  Preview Test
-                </Button>
-                <Button
-                  disabled={saving}
-                  type="submit"
-                  className="ml-3 d-flex align-items-center"
-                  color="success"
-                >
-                  {saving && (
-                    <Icon path={mdiLoading} className="spinner mr-2" size={1} />
-                  )}
-                  Save Test
-                </Button>
-                <Button
-                  onClick={(e) => deleteTest(e)}
-                  className="ml-auto"
-                  color="danger"
-                >
-                  Delete Test
-                </Button>
-              </div>
-            </Form>
-          )}
-        </div>
+                    <FormGroup className="mt-4">
+                      <Label className="text-decoration-underline">
+                        <h4>Assign students/Select any Course</h4>
+                      </Label>
+                      <Row>
+                        <Col style={{ flex: 1 }}>
+                          <Row>
+                            <h6 className="mb-3 mt-1">Select any course</h6>
+                            <select
+                              name="courses"
+                              id="courses"
+                              className="form-control h-100"
+                              // style={{ padding: "0 15px" }}
+                              onChange={handleCourseSelected}
+                            >
+                              <option value="default">Select any course</option>
+                              {CourseList.map((course) => {
+                                return (
+                                  <option
+                                    key={course._id}
+                                    value={course._id}
+                                    selected={
+                                      testData.course === course._id
+                                        ? true
+                                        : false
+                                    }
+                                  >{`${course.title} (${course.code})`}</option>
+                                );
+                              })}
+                            </select>
+                          </Row>
+                        </Col>
+                        <Col
+                          style={{
+                            flex: 0,
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          {" "}
+                          <h3>OR</h3>
+                        </Col>
+                        <Col>
+                          <Label className="mb-0">
+                            <h6>Assign Test</h6>
+                          </Label>
+                          <Input
+                            type="textarea"
+                            required
+                            value={testData.data.assign}
+                            onChange={handleAssign}
+                            className="createTitle py-3"
+                            placeholder="Paste comma se parated emails to assign"
+                            disabled={isCourseSelected}
+                          />
+                        </Col>
+                      </Row>
+                    </FormGroup>
+
+                    <h3 className="mt-4">Test Structure</h3>
+                    <p
+                      className="text-secondary mb-0"
+                      style={{ opacity: "0.5" }}
+                    >
+                      Add your own questions with fields for the test.
+                    </p>
+                  </div>
+                  <AddSection
+                    components={components}
+                    setComponents={setComponents}
+                    handleSectionTitle={handleSectionTitle}
+                    handleSectionDescription={handleSectionDescription}
+                    updateQuestionOrder={updateQuestionOrder}
+                    updateQuestion={updateQuestion}
+                    deleteQuestion={deleteQuestion}
+                    duplicateQuestion={duplicateQuestion}
+                    addQuestion={addQuestion}
+                    deleteSection={deleteSection}
+                    duplicateSection={duplicateSection}
+                    addSection={addSection}
+                  />
+                  <div className="my-5 mb-lg-5 d-flex justify-content-between">
+                    <Button onClick={(e) => previewTest(e)} color="primary">
+                      Preview Test
+                    </Button>
+                    <Button
+                      disabled={saving}
+                      type="submit"
+                      className="ml-3 w-25 d-flex align-items-center justify-content-center"
+                      color="success"
+                    >
+                      {saving && (
+                        <Icon
+                          path={mdiLoading}
+                          className="spinner mr-2"
+                          size={1}
+                        />
+                      )}
+                      Save Test
+                    </Button>
+                    <Button
+                      onClick={(e) => deleteTest(e)}
+                      className="ml-auto"
+                      color="danger"
+                    >
+                      Delete Test
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

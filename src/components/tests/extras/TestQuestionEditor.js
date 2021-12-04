@@ -21,7 +21,7 @@ const TestQuestionEditor = ({
   updateQuestion,
   questionIndex,
 }) => {
-  const {
+  let {
     id,
     type,
     question,
@@ -30,12 +30,29 @@ const TestQuestionEditor = ({
     questionFiles,
     ansFileType,
     ans_mcq,
+    optionType,
   } = questionData;
 
   const history = useHistory();
-  const [rSelected, setRSelected] = useState(null);
+  const [rSelected, setRSelected] = useState(1);
   const [allOptions, setAlloptions] = useState([]);
   // const [isChecked, setIschecked] = useState(false);
+
+  const changeOptionType = (type) => {
+    if (type === "single") {
+      setRSelected(1);
+      updateQuestion({
+        ...questionData,
+        optionType: "radio",
+      });
+    } else {
+      setRSelected(2);
+      updateQuestion({
+        ...questionData,
+        optionType: "checkbox",
+      });
+    }
+  };
 
   const changeQuestion = (event) => {
     updateQuestion({
@@ -254,7 +271,7 @@ const TestQuestionEditor = ({
           value={question}
           placeholder="Enter your question"
           onChange={changeQuestion}
-          className="mb-2"
+          className="mb-2 createSection"
         />
       </FormGroup>
       <FormGroup>
@@ -292,7 +309,7 @@ const TestQuestionEditor = ({
               <Input
                 type="select"
                 onChange={changeAnsFileType}
-                className="border-primary pl-2 ml-2"
+                className="border-primary pl-2 mx-5"
                 value={ansFileType}
               >
                 <option value="Any">All Files</option>
@@ -307,7 +324,7 @@ const TestQuestionEditor = ({
               <Input
                 type="select"
                 onChange={changeAnsFileType}
-                className="border-primary pl-2 ml-2"
+                className="border-primary pl-2 mx-5"
                 value={ansFileType}
               >
                 <option value="Video">Video</option>
@@ -315,53 +332,60 @@ const TestQuestionEditor = ({
               </Input>
             )}
           </div>
+          {type === "checkbox" ? (
+            <div
+              className="d-flex justify-content-center align-items-center "
+              style={{
+                marginTop: "25px",
+              }}
+            >
+              <ButtonGroup>
+                <div style={{ margin: " 0 20px" }}>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      changeOptionType("single");
+                    }}
+                    // name="single"
+                    active={rSelected === 1}
+                    style={{
+                      height: "30px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "0.75rem",
+                      width: "120px",
+                    }}
+                  >
+                    Single Choice
+                  </Button>
+                </div>
+                <div style={{ margin: "0 20px" }}>
+                  <Button
+                    color="primary"
+                    // name="multi"
+                    onClick={() => {
+                      changeOptionType("multi");
+                    }}
+                    active={rSelected === 2}
+                    style={{
+                      height: "30px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "0.75rem",
+                      width: "120px",
+                    }}
+                  >
+                    Multiple Choice
+                  </Button>
+                </div>
+              </ButtonGroup>
+            </div>
+          ) : (
+            <> </>
+          )}
         </Col>
-        {type === "checkbox" ? (
-          <div
-            className="d-flex justify-content-center align-items-center "
-            style={{
-              marginTop: "25px",
-            }}
-          >
-            <ButtonGroup>
-              <div style={{ marginRight: "10px" }}>
-                <Button
-                  color="primary"
-                  onClick={() => setRSelected(1)}
-                  active={rSelected === 1}
-                  style={{
-                    height: "30px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    fontSize: "0.75rem",
-                  }}
-                >
-                  Single Choice
-                </Button>
-              </div>
-              <div style={{ marginRight: "10px" }}>
-                <Button
-                  color="primary"
-                  onClick={() => setRSelected(2)}
-                  active={rSelected === 2}
-                  style={{
-                    height: "30px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    fontSize: "0.75rem",
-                    marginRight: "5px",
-                  }}
-                >
-                  Multiple Choice
-                </Button>
-              </div>
-            </ButtonGroup>
-          </div>
-        ) : (
-          <> </>
-        )}
       </div>
       {type === "checkbox" && renderOptions()}
       <div className="pl-4 mt-3">

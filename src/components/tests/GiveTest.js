@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TestService from "../../services/test.service";
 import { Redirect, useHistory } from "react-router-dom";
 import {
@@ -14,7 +14,7 @@ import Icon from "@mdi/react";
 import { mdiLoading } from "@mdi/js";
 import {
   ReactMediaRecorder,
-  useReactMediaRecorder,
+  // useReactMediaRecorder,
 } from "react-media-recorder";
 // import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,6 +23,7 @@ import Countdown from "react-countdown";
 import uploadService from "../../services/upload.service";
 import Peer from "peerjs";
 import io from "socket.io-client";
+import Draggable from "react-draggable";
 var mime = require("mime-types");
 
 const RenderQuestion = ({
@@ -32,6 +33,7 @@ const RenderQuestion = ({
   isRequired,
   questionFiles,
   ansFileType,
+  optionType,
   question_details,
   index,
   sectionIndex,
@@ -143,7 +145,7 @@ const RenderQuestion = ({
             <div key={index} className="form-check">
               <input
                 className="form-check-input"
-                type="radio"
+                type={optionType}
                 name={identifier}
                 id="checker"
                 value={index}
@@ -262,7 +264,13 @@ const RenderQuestion = ({
 };
 
 const GiveTest = () => {
-  const socket = io("http://localhost:8000", { secure: true });
+  let history = useHistory();
+  let socket;
+
+  const preview = history.location.pathname.split("/");
+  if (preview[preview.length - 2] !== "preview") {
+    socket = io("http://localhost:8000", { secure: true });
+  }
   const userVideo = useRef();
 
   const [studentState, setStudentState] = useState(false);
@@ -345,8 +353,6 @@ const GiveTest = () => {
     );
   };
 
-  let history = useHistory();
-
   const testId =
     history.location.pathname.split("/").length === 4
       ? history.location.pathname.split("/").pop()
@@ -373,75 +379,100 @@ const GiveTest = () => {
       }
     );
 
-    // Emit socket with email id to check if it exists or not if yes then disconnect this socket andskip this else create new peer and do as usual
-    const studentToken = localStorage.getItem("token");
+    if (preview[preview.length - 2] !== "preview") {
+      const studentToken = localStorage.getItem("priksha_token");
 
-    socket.emit("check-socket", studentToken, (cb) => {
-      if (cb) {
-        setStudentState(true);
-      } else {
-        // New Peer Connection
-        const peer = new Peer(
-          `student_${(Math.floor(Math.random() * 10000) + 1).toString()}`,
-          {
-            host: "localhost",
-            port: 5000,
-            path: "/",
-          }
-        );
+      socket.emit("check-socket", studentToken, (cb) => {
+        if (cb) {
+          setStudentState(true);
+        } else {
+          // New Peer Connection
+          const peer = new Peer(
+            `student_${(Math.floor(Math.random() * 10000) + 1).toString()}`,
+            {
+              host: "localhost",
+              port: 5000,
+              path: "/",
+            }
+          );
 
-        socket.emit("save-my-peer", { token: studentToken, peer: peer.id });
+          socket.emit("save-my-peer", { token: studentToken, peer: peer.id });
 
-        peer.on("open", () => {
-          localStorage.setItem("peerId", peer.id);
-        });
+          peer.on("open", () => {
+            localStorage.setItem("peerId", peer.id);
+          });
 
-        // Local Video Stream on Page loading
+          // startStreamRecording();
 
-        navigator.mediaDevices
-          .getUserMedia({ video: true })
-          .then((stream) => {
-            userVideo.current.srcObject = stream;
-          })
-          .catch((err) => console.log(err));
+          // Local Video Stream on Page loading
 
-        // Teacher calling to student and student calling back with stream
-        socket.on("send-your-peer-call", (peerId) => {
-          console.log("Request from teacher");
           navigator.mediaDevices
             .getUserMedia({ video: true })
             .then((stream) => {
-              peer.call(peerId, stream);
-              socket.emit("take-student-id", localStorage.getItem("peerid"));
+              userVideo.current.srcObject = stream;
+              let mediaRecorder = new MediaRecorder(stream);
+              let chunks = [];
+              mediaRecorder.start();
+
+              mediaRecorder.ondataavailable = (e) => {
+                // console.log("E ka Data: ", e.data);
+                chunks.push(e.data);
+              };
+
+              setTimeout(() => {
+                mediaRecorder.stop();
+                console.log(chunks);
+                mediaRecorder.onstop = (ev) => {
+                  let blob = new Blob(chunks, { type: "video/mp4" });
+                  socket.emit("take-student-stream", blob);
+                  // console.log(blob);
+                  // chunks = [];
+                  // let videoUrl = URL.createObjectURL(blob);
+                  // console.log(videoUrl);
+                };
+              }, 20000);
             })
             .catch((err) => console.log(err));
-        });
 
-        // Sending emit to server if teacher is present
-        socket.emit("send-me-to-teacher", (data) => {
-          console.log(data);
-          if (data.check) {
+          // Teacher calling to student and student calling back with stream
+          socket.on("send-your-peer-call", (peerId) => {
+            console.log("Request from teacher");
             navigator.mediaDevices
               .getUserMedia({ video: true })
               .then((stream) => {
-                peer.call(data.peerId, stream);
+                peer.call(peerId, stream);
                 socket.emit("take-student-id", localStorage.getItem("peerid"));
               })
               .catch((err) => console.log(err));
-          }
-        });
+          });
 
-        socket.on("connect", () => {
-          console.log("Socket Connected: ", socket.id);
-          // console.log("Test response: ")
-        });
-      }
-    });
+          // Sending emit to server if teacher is present
+          socket.emit("send-me-to-teacher", (data) => {
+            console.log(data);
+            if (data.check) {
+              navigator.mediaDevices
+                .getUserMedia({ video: true })
+                .then((stream) => {
+                  peer.call(data.peerId, stream);
+                  socket.emit(
+                    "take-student-id",
+                    localStorage.getItem("peerid")
+                  );
+                })
+                .catch((err) => console.log(err));
+            }
+          });
+
+          socket.on("connect", () => {
+            console.log("Socket Connected: ", socket.id);
+            // console.log("Test response: ")
+          });
+        }
+      });
+    }
+    // Emit socket with email id to check if it exists or not if yes then disconnect this socket andskip this else create new peer and do as usual
   }, []);
 
-  // socket.on("disconnect", () => {
-  //   socket.emit("socket-disconnect", socket.id);
-  // });
   if (pageLoading) {
     return (
       <div className="hardCenter">
@@ -466,7 +497,7 @@ const GiveTest = () => {
   };
 
   const isAdmin = () => {
-    var type = JSON.parse(localStorage["type"].toString());
+    var type = JSON.parse(localStorage["priksha_type"].toString());
     // console.log(admin.name);
 
     if (type === "A") {
@@ -572,17 +603,33 @@ const GiveTest = () => {
               </Col>
             </Row>
             <hr />
-            <div>
+            <div style={{ postion: "relative" }}>
               <Row>
                 {/* <h1>Current user id is {peerId}</h1> */}
-                <div>
-                  <video
-                    className="students own video"
-                    ref={userVideo}
-                    muted
-                    autoPlay
-                    style={{ width: "300px", height: "150px" }}
-                  />
+                <div
+                  style={{
+                    position: "fixed",
+                    bottom: "5%",
+                    left: "80%",
+                    width: "200px",
+                    height: "150px",
+                  }}
+                >
+                  <Draggable style={{ cursor: "all-scroll" }}>
+                    <div>
+                      <video
+                        className="students own video"
+                        ref={userVideo}
+                        muted
+                        autoPlay
+                        style={{
+                          width: "200px",
+                          height: "150px",
+                          borderRadius: "10px",
+                        }}
+                      />
+                    </div>
+                  </Draggable>
                 </div>
               </Row>
             </div>

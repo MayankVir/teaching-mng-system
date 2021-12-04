@@ -6,7 +6,7 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { login } from "../../actions/auth";
 import { isEmail } from "validator";
 

@@ -29,6 +29,7 @@ const Test = () => {
       (response) => {
         console.log(response.data);
         setTestList(response.data);
+        console.log(response.data);
         setPageLoading(false);
       },
       (error) => {
@@ -43,8 +44,9 @@ const Test = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
   const isAdmin = () => {
-    var type = JSON.parse(localStorage["type"].toString());
+    var type = JSON.parse(localStorage["priksha_type"].toString());
     // console.log(admin.name);
 
     if (type === "A") {
@@ -54,10 +56,20 @@ const Test = () => {
     }
   };
   const isTeacher = () => {
-    var type = JSON.parse(localStorage["type"].toString());
+    var type = JSON.parse(localStorage["priksha_type"].toString());
     // console.log(admin.name);
 
     if (type === "T") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  const isAssistant = () => {
+    var type = JSON.parse(localStorage["priksha_type"].toString());
+    // console.log(admin.name);
+
+    if (type === "TA") {
       return true;
     } else {
       return false;
@@ -103,65 +115,51 @@ const Test = () => {
     <>
       <div className="pt-3 container-fluid" style={{ padding: "15px 30px" }}>
         <div className="row smallerScreen">
-          <div className="col-12 searchCreateTest">
-            <div className="input-group mb-3 search">
-              <input
-                placeholder="Search Test by Name, Id etc."
-                type="text"
-                className="bg-white py-3 text-secondary form-control"
-                style={{ height: "40px" }}
-              />
-              <div className="input-group-append">
-                <button
-                  className="btn btn-outline-light text-dark btn-sm bg-white"
-                  style={{
-                    border: "1px solid #ced4da",
-                    height: "40px",
-                    width: "75px",
-                  }}
-                  type="button"
+          <div className="searchCreateTest">
+            {isAdmin() || isTeacher() || isAssistant() ? (
+              <>
+                {isAdmin() ? (
+                  <div className="mx-2">
+                    <div>Filter by teacher:</div>
+                    <select
+                      name="teacherList"
+                      id="teachers"
+                      className="form-control"
+                      onChange={displaySpecificTests}
+                      style={{ width: "100%" }}
+                    >
+                      <option value="default" selected>
+                        All
+                      </option>
+                      {teachersList.map((teacher) => {
+                        return (
+                          <option
+                            value={teacher._id}
+                            key={teacher._id}
+                            style={{ padding: "2px 0" }}
+                          >{`${teacher.name} (${teacher.email})`}</option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                ) : (
+                  <> </>
+                )}
+                <Link
+                  to="/tests/edit/"
+                  onClick={(e) => createNewTest(e)}
+                  className="card p-2  px-3 border-0 flex-row btn bg-dark text-white createTest"
                 >
-                  Search
-                </button>
-              </div>
-            </div>
-            {isAdmin() || isTeacher() ? (
-              <Link
-                to="/tests/edit/"
-                onClick={(e) => createNewTest(e)}
-                className="card p-2 mb-3 px-3 border-0 flex-row btn bg-success text-white createTest"
-              >
-                Create Test <Icon path={mdiPlus} size={1} className="ml-auto" />
-              </Link>
+                  Create Test{" "}
+                  <Icon path={mdiPlus} size={1} className="ml-auto" />
+                </Link>
+              </>
             ) : (
               <> </>
             )}
           </div>
         </div>
-        {isAdmin() ? (
-          <>
-            <div>Filter by teacher:</div>
-            <select
-              name="teacherList"
-              id="teachers"
-              className="form-control"
-              onChange={displaySpecificTests}
-            >
-              <option value="default" selected>
-                All
-              </option>
-              {teachersList.map((teacher) => {
-                return (
-                  <option
-                    value={`${teacher._id}`}
-                  >{`${teacher.name} (${teacher.email})`}</option>
-                );
-              })}
-            </select>
-          </>
-        ) : (
-          <> </>
-        )}
+        <hr />
         <div className="row">
           <div className="col-12">
             {pageLoading ? (
@@ -179,102 +177,189 @@ const Test = () => {
               <Row>
                 {testList.length > 0 ? (
                   testList.map((data) => (
-                    <Col lg="6" key={data._id}>
+                    <Col
+                      lg="6"
+                      key={data._id}
+                      // onClick={() => history.push(`/tests/preview/${data._id}`)}
+                    >
                       <div
-                        className="card p-3 my-2 flex-row text-dark"
-                        style={{ justifyContent: "space-between" }}
+                        className="card p-3 my-3 mx-1 flex-row text-dark hoveringTest"
+                        style={{
+                          justifyContent: "space-between",
+                          cursor: "pointer",
+                        }}
                       >
-                        <div>
-                          <h5 className="mb-2 font-weight-bold">
-                            {data.title}
-                          </h5>
-                          <p className="small mb-0">
-                            <b>Created On:</b> {data.createdAt.split("T")[0]},{" "}
-                            {data.createdAt.split("T")[1].substring(0, 5)}
-                          </p>
-                          <p className="small mb-0">
-                            <b>Last Updated:</b> {data.updatedAt.split("T")[0]},{" "}
-                            {data.updatedAt.split("T")[1].substring(0, 5)}
-                          </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-evenly",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <div>
+                            <h5 className="mb-2 font-weight-bold">
+                              Title: <b>{data.title ? data.title : ""} </b>
+                            </h5>
+                            <h6 className="mb-2 font-weight-bold">
+                              <b>
+                                {" "}
+                                {data.data && data.data.description
+                                  ? data.data.description
+                                  : ""}
+                              </b>
+                            </h6>
+                          </div>
+
+                          <div>
+                            <p className="small mb-0">
+                              <b>Created On:</b> {data.createdAt.split("T")[0]},{" "}
+                              {data.createdAt.split("T")[1].substring(0, 5)}
+                            </p>
+                            <p className="small mb-0">
+                              <b>Last Updated:</b>{" "}
+                              {data.updatedAt.split("T")[0]},{" "}
+                              {data.updatedAt.split("T")[1].substring(0, 5)}
+                            </p>
+                          </div>
                         </div>
                         <div className="ml-auto text-dark">
-                          {isAdmin() || isTeacher() ? (
-                            <div>
-                              <Icon
-                                path={mdiBook}
-                                size={1}
-                                className=" hoverPointer"
-                                title="Give scores and reviews"
+                          {isAdmin() || isTeacher() || isAssistant() ? (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <div
                                 onClick={() =>
                                   history.push(`/tests/students/${data._id}`)
                                 }
                                 style={{ cursor: "pointer" }}
-                              />
-                              <Icon
-                                path={mdiPencil}
-                                size={1}
-                                className=" hoverPointer"
-                                title="Edit Test"
+                                className="testOptions"
+                              >
+                                <div className="testOptionsText">
+                                  Give scores and reviews
+                                </div>
+                                <Icon
+                                  path={mdiBook}
+                                  size={1}
+                                  className="hoverPointer"
+                                  title="Give scores and reviews"
+                                />
+                              </div>
+                              <div
+                                className="testOptions"
                                 onClick={() =>
                                   history.push(`/tests/edit/${data._id}`)
                                 }
-                                style={{ cursor: "pointer" }}
-                              />
-                              <Icon
-                                path={mdiEye}
-                                size={1}
-                                className="ml-2 hoverPointer"
-                                title="Preview Test"
+                              >
+                                <div className="testOptionsText">Edit Test</div>
+                                <Icon
+                                  path={mdiPencil}
+                                  size={1}
+                                  className="hoverPointer"
+                                  title="Edit Test"
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </div>
+
+                              <div
+                                className="testOptions"
                                 onClick={() =>
                                   history.push(`/tests/preview/${data._id}`)
                                 }
-                                style={{ cursor: "pointer" }}
-                              />
-                              <Icon
-                                path={mdiDelete}
-                                size={1}
-                                className="ml-2 hoverPointer"
-                                title="Delete Test"
+                              >
+                                <div className="testOptionsText">
+                                  Preview Test
+                                </div>
+                                <Icon
+                                  path={mdiEye}
+                                  size={1}
+                                  className="ml-2 hoverPointer"
+                                  title="Preview Test"
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </div>
+
+                              <div
+                                className="testOptions"
                                 onClick={() =>
                                   history.push(`/tests/delete/${data._id}`)
                                 }
-                                style={{ cursor: "pointer" }}
-                              />
-                              <Icon
-                                path={mdiVideo}
-                                size={1}
-                                className="ml-2 hoverPointer"
-                                title="Monitor test"
+                              >
+                                <div className="testOptionsText">
+                                  Delete Test
+                                </div>
+                                <Icon
+                                  path={mdiDelete}
+                                  size={1}
+                                  className="ml-2 hoverPointer"
+                                  title="Delete Test"
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </div>
+
+                              <div
+                                className="testOptions"
                                 onClick={() =>
                                   history.push(
                                     `/tests/videomonitor/${data._id}`
                                   )
                                 }
-                                style={{ cursor: "pointer" }}
-                              />
+                              >
+                                <div className="testOptionsText">
+                                  Monitor Test
+                                </div>
+                                <Icon
+                                  path={mdiVideo}
+                                  size={1}
+                                  className="ml-2 hoverPointer"
+                                  title="Monitor test"
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </div>
                             </div>
                           ) : (
                             <div>
-                              <Icon
-                                path={mdiEye}
-                                size={1}
-                                className="ml-2 hoverPointer"
-                                title="Get Scores  and reviews"
+                              <div
+                                className="testOptions"
                                 onClick={() =>
                                   history.push(`/tests/response/${data._id}`)
                                 }
-                                style={{ cursor: "pointer" }}
-                              />
-                              <Icon
-                                path={mdiBook}
-                                size={1}
-                                className="ml-2 hoverPointer"
-                                title="Give test"
-                                onClick={() =>
-                                  history.push(`/tests/giveTest/${data._id}`)
-                                }
-                                style={{ cursor: "pointer" }}
-                              />
+                              >
+                                <div className="testOptionsText">
+                                  Get Scores and reviews
+                                </div>
+                                <Icon
+                                  path={mdiEye}
+                                  size={1}
+                                  className="ml-2 hoverPointer"
+                                  title="Get Scores and reviews"
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </div>
+                              {new Date().getTime() <
+                              new Date(data.data.duration.end).getTime() ? (
+                                <div
+                                  className="testOptions"
+                                  onClick={() =>
+                                    history.push(`/tests/giveTest/${data._id}`)
+                                  }
+                                >
+                                  <div className="testOptionsText">
+                                    Give test
+                                  </div>
+                                  <Icon
+                                    path={mdiBook}
+                                    size={1}
+                                    className="ml-2 hoverPointer"
+                                    title="Give test"
+                                    style={{ cursor: "pointer" }}
+                                  />
+                                </div>
+                              ) : (
+                                <></>
+                              )}
                             </div>
                           )}
                         </div>

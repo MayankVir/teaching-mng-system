@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Table } from "reactstrap";
+import { Container } from "reactstrap";
 import CourseService from "../../services/course.service";
 // import Courses from "./db.json";
 
@@ -19,7 +19,7 @@ const ViewCourse = () => {
     CourseService.getOneCourse(id)
       .then(async (response) => {
         console.log(response);
-        await setCourse({
+        setCourse({
           id: response.data._id,
           title: response.data.title,
           description: response.data.description,
