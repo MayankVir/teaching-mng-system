@@ -164,7 +164,7 @@ const ReviewTest = () => {
 
   return (
     <>
-      <div className="container-fluid">
+      <div className="container-fluid" style={{ padding: "15px 7%" }}>
         <div className="row pt-3">
           <div className="col">
             {pageLoading ? (
@@ -179,7 +179,7 @@ const ReviewTest = () => {
                 />
               </div>
             ) : (
-              <h3>Test Details</h3>
+              <h3 style={{ textAlign: "center" }}>Test Details</h3>
             )}
           </div>
         </div>
@@ -243,20 +243,21 @@ const ReviewTest = () => {
               ))}
             </div>
 
-            <div className="mt-4 mb-3 mb-lg-5 d-flex">
-              <Button onClick={(e) => previewTest(e)} color="primary">
-                Preview Test
-              </Button>
+            <div className="my-4 mb-lg-5 d-flex justify-content-center">
               <Button
                 disabled={saving}
                 type="submit"
-                className="ml-3 d-flex align-items-center"
+                className="d-flex align-items-center"
                 color="success"
+                style={{ margin: "0 50px" }}
               >
                 {saving && (
                   <Icon path={mdiLoading} className="spinner mr-2" size={1} />
                 )}
                 Save Review
+              </Button>
+              <Button onClick={(e) => previewTest(e)} color="primary">
+                Preview Test
               </Button>
             </div>
           </Form>

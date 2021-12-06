@@ -93,7 +93,7 @@ const GetScore = () => {
     );
 
   return (
-    <Container fluid>
+    <Container fluid style={{ padding: "15px 7%" }}>
       <Row>
         <Col className="ml-3" md="9">
           <Row>

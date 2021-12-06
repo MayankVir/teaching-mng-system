@@ -519,7 +519,7 @@ const GiveTest = () => {
 
   return (
     <>
-      <Container fluid style={{ padding: "20px 40px" }}>
+      <Container fluid style={{ padding: "15px 7%" }}>
         {studentState ? (
           <div>
             You are already giving the test. You are begin redirected to
@@ -595,7 +595,7 @@ const GiveTest = () => {
                           padding: "5px 10px",
                         }}
                       >
-                        Time Up Kiddo!!
+                        TIME UP
                       </div>
                     )}
                   </Col>
@@ -681,8 +681,10 @@ const GiveTest = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="mt-4 mb-3 mb-lg-5 d-flex">
-                  <Button color="success">Submit</Button>
+                <div className="mt-4 mb-3 mb-lg-5 d-flex justify-content-center">
+                  <Button color="success" style={{ width: "25%" }}>
+                    Submit
+                  </Button>
                 </div>
               )}
               {/* <div className="mt-4 mb-3 mb-lg-5 d-flex">

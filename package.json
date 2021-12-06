@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.16",
     "@mdi/js": "^6.1.95",
     "@mdi/react": "^1.5.0",
     "@testing-library/jest-dom": "^5.11.4",

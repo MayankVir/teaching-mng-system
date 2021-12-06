@@ -101,25 +101,34 @@ const VideoMonitor = () => {
       <div>
         {AllVideos.map((eachStream, i) => {
           return (
-            <video
-              key={i}
-              // style={{ width: "175px", height: "125px", margin: "10px 0" }}
+            <div
               style={{
-                width: "168px",
-                height: "125px",
+                width: "200px",
+                height: "200px",
+                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                 borderRadius: "10px",
-                margin: "20px",
               }}
-              ref={(VideoElem) => {
-                if (VideoElem) {
-                  // VideoElem.id = StreamsRef.current[i].id;
-                  VideoElem.src = eachStream;
-                  VideosRef.current[i] = VideoElem;
-                }
-              }}
-              autoPlay
-              muted
-            />
+            >
+              <video
+                key={i}
+                // style={{ width: "175px", height: "125px", margin: "10px 0" }}
+                style={{
+                  width: "168px",
+                  height: "125px",
+                  borderRadius: "10px",
+                  margin: "20px",
+                }}
+                ref={(VideoElem) => {
+                  if (VideoElem) {
+                    // VideoElem.id = StreamsRef.current[i].id;
+                    VideoElem.src = eachStream;
+                    VideosRef.current[i] = VideoElem;
+                  }
+                }}
+                autoPlay
+                muted
+              />
+            </div>
           );
         })}
         {/* <video className="student ki video" ref={remoteVideoRef}></video> */}

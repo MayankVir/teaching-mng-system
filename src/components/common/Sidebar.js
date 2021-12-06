@@ -1,17 +1,23 @@
 import React from "react";
 import {
-  mdiMonitorDashboard,
+  mdiViewDashboardOutline,
+  mdiViewDashboard,
+  mdiGoogleSpreadsheet,
   mdiNotebookEdit,
   mdiAccountPlus,
-  // mdiBookCheck,
   mdiBookMultiple,
 } from "@mdi/js";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+
 import Icon from "@mdi/react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "../common/Common.css";
 import { Scrollbars } from "react-custom-scrollbars";
+// import dashboard from "../../assets/img/dashboard.png";
 
 const Sidebar = ({ user }) => {
   const location = useLocation();
@@ -20,14 +26,16 @@ const Sidebar = ({ user }) => {
     {
       to: "/dashboard",
       value: "dashboard",
-      icon: mdiMonitorDashboard,
+      icon: mdiViewDashboardOutline,
+      activeIcon: mdiViewDashboard,
       text: "Dashboard",
       showLink: ["S", "T", "A", "TA"],
     },
     {
       to: "/tests",
       value: "tests",
-      icon: mdiNotebookEdit,
+      icon: mdiGoogleSpreadsheet,
+      activeIcon: mdiGoogleSpreadsheet,
       text: "Tests",
       showLink: ["S", "T", "A", "TA"],
     },
@@ -35,6 +43,7 @@ const Sidebar = ({ user }) => {
       to: "/register",
       value: "register",
       icon: mdiAccountPlus,
+      activeIcon: mdiAccountPlus,
       text: "New Registration",
       showLink: ["A"],
     },
@@ -49,6 +58,7 @@ const Sidebar = ({ user }) => {
       to: "/allcourses",
       value: "allcourses",
       icon: mdiBookMultiple,
+      activeIcon: mdiBookMultiple,
       text: "All Courses",
       showLink: ["A"],
     },
@@ -77,9 +87,10 @@ const Sidebar = ({ user }) => {
                 }`}
               >
                 <Link to={item.to} className="text-decoration-none d-flex">
+                  {/* <FontAwesomeIcon icon={faCoffee} className="" /> */}
                   <Icon
                     size={1}
-                    path={item.icon}
+                    path={activeIndex === index ? item.activeIcon : item.icon}
                     style={{ marginRight: "5px" }}
                     className="mr-2"
                   />{" "}

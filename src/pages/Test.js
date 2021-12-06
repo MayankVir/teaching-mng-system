@@ -8,6 +8,7 @@ import {
   mdiPlus,
   mdiBook,
   mdiVideo,
+  mdiArrowTopRight,
 } from "@mdi/js";
 import { Link, useHistory } from "react-router-dom";
 import TestService from "../services/test.service";
@@ -282,12 +283,12 @@ const Test = () => {
                               </div>
 
                               <div
-                                className="testOptions"
+                                className="testOptionsDelete"
                                 onClick={() =>
                                   history.push(`/tests/delete/${data._id}`)
                                 }
                               >
-                                <div className="testOptionsText">
+                                <div className="testOptionsTextDelete">
                                   Delete Test
                                 </div>
                                 <Icon
@@ -350,7 +351,7 @@ const Test = () => {
                                     Give test
                                   </div>
                                   <Icon
-                                    path={mdiBook}
+                                    path={mdiArrowTopRight}
                                     size={1}
                                     className="ml-2 hoverPointer"
                                     title="Give test"
